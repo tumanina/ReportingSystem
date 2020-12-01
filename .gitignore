@@ -1,0 +1,8 @@
+ReportingSystem.Web/obj/
+ReportingSystem.Web/bin/
+ReportingSystem.Tests/obj/
+ReportingSystem.Shared/obj/
+ReportingSystem.AzureStorage/obj/
+ReportingSystem.Logic/obj/
+ReportingSystem.PowerBI/obj/
+.vs/

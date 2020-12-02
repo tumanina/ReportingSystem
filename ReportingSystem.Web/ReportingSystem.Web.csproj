@@ -4,5 +4,11 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ReportingSystem.AzureStorage\ReportingSystem.AzureStorage.csproj" />
+    <ProjectReference Include="..\ReportingSystem.Logic\ReportingSystem.Logic.csproj" />
+    <ProjectReference Include="..\ReportingSystem.Shared\ReportingSystem.Shared.csproj" />
+  </ItemGroup>
+
 
 </Project>

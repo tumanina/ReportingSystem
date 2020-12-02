@@ -7,9 +7,9 @@ namespace ReportingSystem.Web.Controllers
     [Route("health")]
     public class HealthController : ControllerBase
     {
-        private readonly ILogger<Controller> _logger;
+        private readonly ILogger<HealthController> _logger;
 
-        public HealthController(ILogger<Controller> logger)
+        public HealthController(ILogger<HealthController> logger)
         {
             _logger = logger;
         }

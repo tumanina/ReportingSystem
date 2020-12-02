@@ -6,6 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ReportingSystem.AzureStorage;
+using ReportingSystem.Logic;
+using ReportingSystem.Shared.Configuration;
+using ReportingSystem.Shared.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +30,10 @@ namespace ReportingSystem.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.Configure<AzureStorageConfiguration>(Configuration.GetSection(nameof(AzureStorageConfiguration)));
+            services.AddScoped<IFileStorage, AzureFileStorage>();
+            services.AddScoped<IFileStorageService, FileStorageService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

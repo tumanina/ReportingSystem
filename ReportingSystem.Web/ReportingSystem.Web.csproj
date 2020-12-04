@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.10" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.6.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.6.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ReportingSystem.AzureStorage\ReportingSystem.AzureStorage.csproj" />
     <ProjectReference Include="..\ReportingSystem.Logic\ReportingSystem.Logic.csproj" />
     <ProjectReference Include="..\ReportingSystem.Shared\ReportingSystem.Shared.csproj" />

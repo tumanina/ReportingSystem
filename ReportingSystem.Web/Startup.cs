@@ -1,25 +1,20 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using ReportingSystem.AzureStorage;
 using ReportingSystem.Logic;
+using ReportingSystem.PowerBI;
 using ReportingSystem.Shared.Configuration;
 using ReportingSystem.Shared.Interfaces;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ReportingSystem.Web
 {
@@ -47,7 +42,9 @@ namespace ReportingSystem.Web
             services.AddSwaggerGenNewtonsoftSupport();
 
             services.Configure<AzureStorageConfiguration>(Configuration.GetSection(nameof(AzureStorageConfiguration)));
-            services.AddScoped<IFileStorage, AzureFileStorage>();
+            services.Configure<PowerBiConfiguration>(Configuration.GetSection(nameof(PowerBiConfiguration)));
+            services.ConfigureAzureStorageServices();
+            services.ConfigurePowerBiServices();
             services.AddScoped<IFileStorageService, FileStorageService>();
 
             services.AddSwaggerGen(c =>

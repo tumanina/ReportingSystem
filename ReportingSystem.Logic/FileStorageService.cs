@@ -13,9 +13,9 @@ namespace ReportingSystem.Logic
             _fileStorage = fileStorage;
         }
 
-        public async Task<bool> UploadFile(string fileName, Stream fileContent)
+        public async Task UploadFile(string fileName, Stream fileContent)
         {
-            return await _fileStorage.UploadFile(fileName, fileContent);
+            await _fileStorage.UploadFile(fileName, fileContent);
         }
     }
 }

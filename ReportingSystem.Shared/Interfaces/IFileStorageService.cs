@@ -5,6 +5,6 @@ namespace ReportingSystem.Shared.Interfaces
 {
     public interface IFileStorageService
     {
-        Task<bool> UploadFile(string fileName, Stream fileContent);
+        Task UploadFile(string fileName, Stream fileContent);
     }
 }

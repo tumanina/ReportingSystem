@@ -3,10 +3,8 @@ using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Files.DataLake;
 using Azure.Storage.Files.DataLake.Models;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ReportingSystem.Shared.Configuration;
-using ReportingSystem.Shared.Extensions;
 using ReportingSystem.Shared.Interfaces;
 using ReportingSystem.Shared.Models;
 using System;
@@ -19,23 +17,19 @@ namespace ReportingSystem.AzureStorage
     public class AzureFileStorage : IFileStorage
     {
         private readonly AzureStorageConfiguration _storageConfiguration;
-        private readonly ILogger<AzureFileStorage> _logger;
 
-        public AzureFileStorage(ILogger<AzureFileStorage> logger, IOptions<AzureStorageConfiguration> storageConfiguration)
+        public AzureFileStorage(IOptions<AzureStorageConfiguration> storageConfiguration)
         {
-            _logger = logger;
             _storageConfiguration = storageConfiguration.Value;
         }
 
-        public async Task<bool> CreateDirectory(string storagePath, string directoryName)
+        public async Task CreateDirectory(string storagePath, string directoryName)
         {
-            return await Execute(async (sharedKeyCredential) =>
+            await Execute(async (sharedKeyCredential) =>
             {
                 var serviceClient = new DataLakeServiceClient(new Uri(_storageConfiguration.Url), sharedKeyCredential);
                 var filesystem = serviceClient.GetFileSystemClient(storagePath);
                 await filesystem.CreateDirectoryAsync(directoryName);
-
-                return true;
             });
         }
 
@@ -74,9 +68,9 @@ namespace ReportingSystem.AzureStorage
             });
         }
 
-        public async Task<bool> MoveFile(string storagePath, string fileName, string destinationDirectoryPath)
+        public async Task MoveFile(string storagePath, string fileName, string destinationDirectoryPath)
         {
-            return await Execute(async (sharedKeyCredential) =>
+            await Execute(async (sharedKeyCredential) =>
             {
                 var serviceClient = new DataLakeServiceClient(new Uri(_storageConfiguration.Url), sharedKeyCredential);
                 var fileSystem = serviceClient.GetFileSystemClient(storagePath);
@@ -89,41 +83,38 @@ namespace ReportingSystem.AzureStorage
                 }
 
                 await fileSystem.DeleteAsync();
-
-                return true;
             });
         }
 
-        public async Task<bool> UploadFile(string fileName, Stream fileContent)
+        public async Task UploadFile(string fileName, Stream fileContent)
         {
-            return await Execute(async (sharedKeyCredential) =>
+            await Execute(async (sharedKeyCredential) =>
             {
                 var client = new BlobClient(new Uri($"{_storageConfiguration?.Url}/{fileName}"), sharedKeyCredential);
 
                 fileContent.Position = 0;
                 await client.UploadAsync(fileContent);
-
-                return true;
             });
         }
 
         private async Task<T> Execute<T>(Func<StorageSharedKeyCredential, Task<T>> func)
         {
-            if (!string.IsNullOrEmpty(_storageConfiguration?.Url))
-            {
-                try
-                {
-                    var sharedKeyCredential = new StorageSharedKeyCredential(_storageConfiguration.AccountName, _storageConfiguration.AccountKey);
+            return await func(GetCredentials());
+        }
 
-                    return await func(sharedKeyCredential);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, ex.GetMessage());
-                }
+        private async Task Execute(Func<StorageSharedKeyCredential, Task> func)
+        {
+            await func(GetCredentials());
+        }
+
+        private StorageSharedKeyCredential GetCredentials()
+        {
+            if (string.IsNullOrEmpty(_storageConfiguration?.Url))
+            {
+                throw new Exception("AzureStorageConfiguration.Url is empty or null.");
             }
 
-            return default(T);
+            return new StorageSharedKeyCredential(_storageConfiguration.AccountName, _storageConfiguration.AccountKey);
         }
     }
 }

@@ -1,45 +1,44 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ReportingSystem.Shared.Interfaces;
+using ReportingSystem.Web.Models;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace ReportingSystem.Web.Controllers
 {
-    [ApiController]
     [Route("api/v1/files")]
-    public class StorageFilesController : ControllerBase
+    public class StorageFilesController : BaseController
     {
-        private readonly ILogger<StorageFilesController> _logger;
         private readonly IFileStorageService _fileStorageService;
 
         public StorageFilesController(ILogger<StorageFilesController> logger, IFileStorageService fileStorageService)
+            :base(logger)
         {
-            _logger = logger;
             _fileStorageService = fileStorageService;
         }
 
         [HttpPost]
         [Route("upload")]
-        public async Task<bool> UploadFile()
+        public async Task<BaseApiModel> UploadFile()
         {
-            var result = false;
-            if (Request.Form.Files.Count > 0)
+            return await Execute(async () =>
             {
-                var file = Request.Form.Files[0];
-                var filePath = Path.GetTempFileName();
-
-                if (file.Length > 0)
+                if (Request.Form.Files.Count > 0)
                 {
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    var file = Request.Form.Files[0];
+                    var filePath = Path.GetTempFileName();
+
+                    if (file.Length > 0)
                     {
-                        await file.CopyToAsync(stream);
-                        result = await _fileStorageService.UploadFile(file.FileName, stream);
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                            await _fileStorageService.UploadFile(file.FileName, stream);
+                        }
                     }
                 }
-            }
-
-            return result;
+            });
         }
     }
 }

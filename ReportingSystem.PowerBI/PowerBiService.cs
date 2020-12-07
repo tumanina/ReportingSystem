@@ -5,7 +5,6 @@ using Microsoft.PowerBI.Api.Models;
 using Microsoft.Rest;
 using ReportingSystem.PowerBI.Interfaces;
 using ReportingSystem.Shared.Configuration;
-using ReportingSystem.Shared.Extensions;
 using ReportingSystem.Shared.Interfaces;
 using ReportingSystem.Shared.Models;
 using System;
@@ -19,11 +18,9 @@ namespace ReportingSystem.PowerBI
     {
         private readonly PowerBiConfiguration _powerBiConfiguration;
         private readonly IAuthService _authService;
-        private readonly ILogger<PowerBiService> _logger;
-
-        public PowerBiService(ILogger<PowerBiService> logger, IAuthService authService, IOptions<PowerBiConfiguration> powerBiConfiguration)
+        
+        public PowerBiService(IAuthService authService, IOptions<PowerBiConfiguration> powerBiConfiguration)
         {
-            _logger = logger;
             _authService = authService;
             _powerBiConfiguration = powerBiConfiguration.Value;
         }
@@ -98,28 +95,19 @@ namespace ReportingSystem.PowerBI
 
         private async Task<T> Execute<T>(Func<PowerBIClient, Task<T>> func)
         {
-            try
-            {
-                var token = await _authService.Login(_powerBiConfiguration.ClientId, _powerBiConfiguration.UserName, _powerBiConfiguration.Password);
+            var token = await _authService.Login(_powerBiConfiguration.ClientId, _powerBiConfiguration.UserName, _powerBiConfiguration.Password);
 
-                if (token == null)
+            if (token == null)
+            {
+                throw new Exception("Authorization failed");
+            }
+            else
+            {
+                using (var client = new PowerBIClient(new TokenCredentials(token.Token, "Bearer")))
                 {
-                    _logger.LogError("Authorization failed");
-                }
-                else
-                {
-                    using (var client = new PowerBIClient(new TokenCredentials(token.Token, "Bearer")))
-                    {
-                        return await func(client);
-                    }
+                    return await func(client);
                 }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.GetMessage());
-            }
-
-            return default(T);
         }
     }
 }

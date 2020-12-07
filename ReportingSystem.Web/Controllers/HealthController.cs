@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ReportingSystem.Web.Models;
 
 namespace ReportingSystem.Web.Controllers
 {
@@ -16,9 +17,9 @@ namespace ReportingSystem.Web.Controllers
 
         [HttpGet]
         [Route("ping")]
-        public string Ping()
+        public BaseApiDataModel<string> Ping()
         {
-            return "response";
+            return new BaseApiDataModel<string> { Data = "response" };
         }
     }
 }

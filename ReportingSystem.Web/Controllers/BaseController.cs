@@ -18,11 +18,12 @@ namespace ReportingSystem.Web.Controllers
             _logger = logger;
         }
 
-        internal async Task<BaseApiDataModel<T>> Execute<T>(Func<Task<BaseApiDataModel<T>>> func)
+        internal async Task<BaseApiDataModel<T>> Execute<T>(Func<Task<T>> func)
         {
             try
             {
-                return await func();
+                var data =  await func();
+                return new BaseApiDataModel<T> { Data = data };
             }
             catch (Exception ex)
             {

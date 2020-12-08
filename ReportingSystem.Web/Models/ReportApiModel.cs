@@ -1,6 +1,6 @@
 ﻿namespace ReportingSystem.Web.Models
 {
-    public class ReportModel
+    public class ReportApiModel
     {
         public string Id { get; set; }
 

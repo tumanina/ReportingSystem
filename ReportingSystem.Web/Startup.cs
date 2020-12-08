@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using ReportingSystem.AzureStorage;
-using ReportingSystem.Logic;
+using ReportingSystem.Logic.Services;
 using ReportingSystem.PowerBI;
 using ReportingSystem.Shared.Configuration;
 using ReportingSystem.Shared.Interfaces;
@@ -45,7 +45,9 @@ namespace ReportingSystem.Web
             services.Configure<PowerBiConfiguration>(Configuration.GetSection(nameof(PowerBiConfiguration)));
             services.ConfigureAzureStorageServices();
             services.ConfigurePowerBiServices();
-            services.AddScoped<IFileStorageService, FileStorageService>();
+            services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IReportManager, ReportManager>();
 
             services.AddSwaggerGen(c =>
             {

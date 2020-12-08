@@ -54,18 +54,15 @@ namespace ReportingSystem.PowerBI
             });
         }
 
-        public async Task<bool> DeleteReport(string groupId, string reportId)
+        public async Task DeleteReport(string groupId, string reportId)
         {
             if (Guid.TryParse(reportId, out Guid powerBiReportId) && Guid.TryParse(groupId, out Guid powerBiGroupId))
             {
-                return await Execute<bool>(async (client) =>
+                await Execute(async (client) =>
                 {
                     await client.Reports.DeleteReportInGroupAsync(powerBiGroupId, powerBiReportId);
-
-                    return true;
                 });
             }
-            return false;
         }
         public async Task<ReportModel> Deploy(Stream file, string groupId, string datasetName)
         {
@@ -95,19 +92,34 @@ namespace ReportingSystem.PowerBI
 
         private async Task<T> Execute<T>(Func<PowerBIClient, Task<T>> func)
         {
+            var tokenCredentials = await GetTokenCredentials();
+
+            using (var client = new PowerBIClient(tokenCredentials))
+            {
+                return await func(client);
+            }
+        }
+
+        private async Task Execute(Func<PowerBIClient, Task> func)
+        {
+            var tokenCredentials = await GetTokenCredentials();
+
+            using (var client = new PowerBIClient(tokenCredentials))
+            {
+                await func(client);
+            }
+        }
+
+        private async Task<TokenCredentials> GetTokenCredentials()
+        {
             var token = await _authService.Login(_powerBiConfiguration.ClientId, _powerBiConfiguration.UserName, _powerBiConfiguration.Password);
 
             if (token == null)
             {
                 throw new Exception("Authorization failed");
             }
-            else
-            {
-                using (var client = new PowerBIClient(new TokenCredentials(token.Token, "Bearer")))
-                {
-                    return await func(client);
-                }
-            }
+
+            return new TokenCredentials(token.Token, "Bearer");
         }
     }
 }

@@ -23,22 +23,22 @@ namespace ReportingSystem.AzureStorage
             _storageConfiguration = storageConfiguration.Value;
         }
 
-        public async Task CreateDirectory(string storagePath, string directoryName)
+        public async Task CreateDirectory(string directoryName)
         {
             await Execute(async (sharedKeyCredential) =>
             {
                 var serviceClient = new DataLakeServiceClient(new Uri(_storageConfiguration.Url), sharedKeyCredential);
-                var filesystem = serviceClient.GetFileSystemClient(storagePath);
+                var filesystem = serviceClient.GetFileSystemClient(_storageConfiguration.Url);
                 await filesystem.CreateDirectoryAsync(directoryName);
             });
         }
 
-        public async Task<FileModel> GetFile(string storagePath, string fileName)
+        public async Task<FileModel> GetFile(string fileName)
         {
             return await Execute(async (sharedKeyCredential) =>
             {
                 var serviceClient = new DataLakeServiceClient(new Uri(_storageConfiguration.Url), sharedKeyCredential);
-                var filesystem = serviceClient.GetFileSystemClient(storagePath);
+                var filesystem = serviceClient.GetFileSystemClient(_storageConfiguration.Url);
                 var file = filesystem.GetFileClient(fileName);
 
                 Response<FileDownloadInfo> fileContents = await file.ReadAsync();
@@ -51,13 +51,13 @@ namespace ReportingSystem.AzureStorage
             });
         }
 
-        public async Task<IEnumerable<string>> GetFileNames(string storagePath)
+        public async Task<IEnumerable<string>> GetFileNames()
         {
             return await Execute<IEnumerable<string>>(async (sharedKeyCredential) =>
             {
                 var names = new List<string>();
                 var serviceClient = new DataLakeServiceClient(new Uri(_storageConfiguration.Url), sharedKeyCredential);
-                var fileSystemClient = serviceClient.GetFileSystemClient(storagePath);
+                var fileSystemClient = serviceClient.GetFileSystemClient(_storageConfiguration.Url);
 
                 await foreach (PathItem pathItem in fileSystemClient.GetPathsAsync())
                 {
@@ -68,12 +68,12 @@ namespace ReportingSystem.AzureStorage
             });
         }
 
-        public async Task MoveFile(string storagePath, string fileName, string destinationDirectoryPath)
+        public async Task MoveFile(string fileName, string destinationDirectoryPath)
         {
             await Execute(async (sharedKeyCredential) =>
             {
                 var serviceClient = new DataLakeServiceClient(new Uri(_storageConfiguration.Url), sharedKeyCredential);
-                var fileSystem = serviceClient.GetFileSystemClient(storagePath);
+                var fileSystem = serviceClient.GetFileSystemClient(_storageConfiguration.Url);
 
                 var destinationFileSystem = serviceClient.GetFileSystemClient(destinationDirectoryPath);
                 var fileClient = await destinationFileSystem.CreateFileAsync(fileName);

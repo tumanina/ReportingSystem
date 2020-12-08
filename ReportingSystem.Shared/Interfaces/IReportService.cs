@@ -4,11 +4,10 @@ using System.Threading.Tasks;
 
 namespace ReportingSystem.Shared.Interfaces
 {
-    public interface IReportEngineTool
+    public interface IReportService
     {
-        Task<string> CreateGroup(string name);
         Task<ReportModel> CreateReport(string groupId, string templateReportId, string name);
         Task DeleteReport(string groupId, string reportId);
-        Task<ReportModel> Deploy(Stream file, string groupId, string datasetName);
+        Task<ReportModel> Deploy(Stream file, string groupId, string name);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace ReportingSystem.Web.Models
 {
-    public class FileModel
+    public class FileApiModel
     {
         public string Name { get; set; }
 

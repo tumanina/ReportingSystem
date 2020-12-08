@@ -10,9 +10,9 @@ namespace ReportingSystem.Web.Controllers
     [Route("api/v1/files")]
     public class StorageFilesController : BaseController
     {
-        private readonly IFileStorageService _fileStorageService;
+        private readonly IFileService _fileStorageService;
 
-        public StorageFilesController(ILogger<StorageFilesController> logger, IFileStorageService fileStorageService)
+        public StorageFilesController(ILogger<StorageFilesController> logger, IFileService fileStorageService)
             :base(logger)
         {
             _fileStorageService = fileStorageService;

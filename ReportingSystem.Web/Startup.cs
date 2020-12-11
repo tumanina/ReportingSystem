@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,10 +9,13 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using ReportingSystem.AzureStorage;
+using ReportingSystem.Logic.Authentification;
 using ReportingSystem.Logic.Services;
 using ReportingSystem.PowerBI;
 using ReportingSystem.Shared.Configuration;
 using ReportingSystem.Shared.Interfaces;
+using ReportingSystem.Shared.Interfaces.Authentification;
+using ReportingSystem.Web.Authentication;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.IO;
@@ -43,22 +47,18 @@ namespace ReportingSystem.Web
 
             services.Configure<AzureStorageConfiguration>(Configuration.GetSection(nameof(AzureStorageConfiguration)));
             services.Configure<PowerBiConfiguration>(Configuration.GetSection(nameof(PowerBiConfiguration)));
+            services.Configure<SecuritySettings>(Configuration.GetSection(nameof(SecuritySettings)));
             services.ConfigureAzureStorageServices();
             services.ConfigurePowerBiServices();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IReportService, ReportService>();
-            services.AddScoped<IReportManager, ReportManager>();
+            services.AddSingleton<IAccountService, AccountService>();
+            services.AddSingleton<IJwtTokenService, JwtTokenService>();
+            services.AddSingleton<ISecurityService, Rs256SecurityService>();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Reporting service", Version = "v1" });
+            services.ConfigureAuth();
 
-                var files = Directory.GetFiles(AppContext.BaseDirectory, "*.xml");
-                foreach (var file in files)
-                {
-                    c.IncludeXmlComments(file);
-                }
-            });
+            ConfigureSwagger(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,11 +79,35 @@ namespace ReportingSystem.Web
             });
 
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+        }
+
+        private void ConfigureSwagger(IServiceCollection services)
+        {
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Reporting service", Version = "v1" });
+
+                c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header Token. Enter : \"Bearer YourTokenHere\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT"
+                });
+                var files = Directory.GetFiles(AppContext.BaseDirectory, "*.xml");
+                foreach (var file in files)
+                {
+                    c.IncludeXmlComments(file);
+                }
             });
         }
     }

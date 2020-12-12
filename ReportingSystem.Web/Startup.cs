@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,6 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using ReportingSystem.AzureStorage;
+using ReportingSystem.Dal.DbContexts;
 using ReportingSystem.Logic.Authentification;
 using ReportingSystem.Logic.Services;
 using ReportingSystem.PowerBI;
@@ -44,6 +46,10 @@ namespace ReportingSystem.Web
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 });
             services.AddSwaggerGenNewtonsoftSupport();
+
+            var connectionString = Configuration.GetConnectionString("DBConnectionString");
+            services.AddDbContext<ReportingDbContext>(
+                options => options.UseSqlServer(connectionString));
 
             services.Configure<AzureStorageConfiguration>(Configuration.GetSection(nameof(AzureStorageConfiguration)));
             services.Configure<PowerBiConfiguration>(Configuration.GetSection(nameof(PowerBiConfiguration)));

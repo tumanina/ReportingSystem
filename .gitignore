@@ -14,3 +14,6 @@ ReportingSystem.PowerBI/bin/
 ReportingSystem.Tests/bin/
 ReportingSystem.Web/ReportingSystem.Web.csproj.user
 ReportingSystem.Tests/ReportingSystem.Tests.csproj.user
+ReportingSystem.Dal/obj/
+ReportingSystem.Dal/bin/
+ReportingSystem.Dal/ReportingSystem.Dal.csproj.user

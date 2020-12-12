@@ -5,15 +5,17 @@ VisualStudioVersion = 16.0.30709.132
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportingSystem.Web", "ReportingSystem.Web\ReportingSystem.Web.csproj", "{C972703E-1995-4363-98FA-C10ABA897692}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportingSystem.Logic", "ReportingSystem.Logic\ReportingSystem.Logic.csproj", "{5DDBFD3F-65B4-43A4-ACC7-74EDB31C307F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportingSystem.Logic", "ReportingSystem.Logic\ReportingSystem.Logic.csproj", "{5DDBFD3F-65B4-43A4-ACC7-74EDB31C307F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportingSystem.Shared", "ReportingSystem.Shared\ReportingSystem.Shared.csproj", "{0F9607F8-E13B-4754-9D77-8A661861A94E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportingSystem.Shared", "ReportingSystem.Shared\ReportingSystem.Shared.csproj", "{0F9607F8-E13B-4754-9D77-8A661861A94E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportingSystem.PowerBI", "ReportingSystem.PowerBI\ReportingSystem.PowerBI.csproj", "{A6183947-21D9-4427-A709-EC7EB24FC952}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportingSystem.PowerBI", "ReportingSystem.PowerBI\ReportingSystem.PowerBI.csproj", "{A6183947-21D9-4427-A709-EC7EB24FC952}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportingSystem.AzureStorage", "ReportingSystem.AzureStorage\ReportingSystem.AzureStorage.csproj", "{ACB0CCDD-F412-4D0B-BD58-9FEDF1930B5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportingSystem.AzureStorage", "ReportingSystem.AzureStorage\ReportingSystem.AzureStorage.csproj", "{ACB0CCDD-F412-4D0B-BD58-9FEDF1930B5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportingSystem.Tests", "ReportingSystem.Tests\ReportingSystem.Tests.csproj", "{9DAEB884-0394-4C11-B1A4-AA5CCEF90551}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportingSystem.Tests", "ReportingSystem.Tests\ReportingSystem.Tests.csproj", "{9DAEB884-0394-4C11-B1A4-AA5CCEF90551}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportingSystem.Dal", "ReportingSystem.Dal\ReportingSystem.Dal.csproj", "{0FF6016C-6084-497A-AC6D-06788A0F9D19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{9DAEB884-0394-4C11-B1A4-AA5CCEF90551}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DAEB884-0394-4C11-B1A4-AA5CCEF90551}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DAEB884-0394-4C11-B1A4-AA5CCEF90551}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FF6016C-6084-497A-AC6D-06788A0F9D19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FF6016C-6084-497A-AC6D-06788A0F9D19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FF6016C-6084-497A-AC6D-06788A0F9D19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FF6016C-6084-497A-AC6D-06788A0F9D19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

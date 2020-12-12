@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ReportingSystem.Shared.Models
+namespace ReportingSystem.Dal.Entities
 {
-    public class AccountModel
+    public class AccountEntity
     {
         public Guid Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
 
-        public IEnumerable<ActionModel> Actions { get; set; }
+        public virtual ICollection<AccountActionEntity> Actions { get; set; }
     }
 }

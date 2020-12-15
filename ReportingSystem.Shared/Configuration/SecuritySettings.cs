@@ -1,4 +1,5 @@
 ﻿using ReportingSystem.Shared.Enums;
+using System;
 
 namespace ReportingSystem.Shared.Configuration
 {
@@ -10,5 +11,6 @@ namespace ReportingSystem.Shared.Configuration
         public SecurityTypeEnum SecurityType { get; set; }
         public string Audience { get; set; }
         public string Issuer { get; set; }
+        public TimeSpan TokenExpiration { get; set; }
     }
 }

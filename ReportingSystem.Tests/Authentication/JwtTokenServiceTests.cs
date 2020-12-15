@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ReportingSystem.Logic.Authentification;
@@ -9,13 +8,42 @@ using ReportingSystem.Shared.Interfaces.Authentification;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ReportingSystem.Tests.Authentication
 {
     [TestClass]
     public class JwtTokenServiceTests
     {
+        [TestMethod]
+        public void GenerateToken_Success()
+        {
+            var tokenExpiration = new TimeSpan(1, 0, 0);
+            var settings = new SecuritySettings
+            {
+                SecurityType = SecurityTypeEnum.RS256,
+                Audience = "local.auth.audience",
+                Issuer = "local.auth.issuer",
+                TokenExpiration = tokenExpiration,
+                CertificateData = "***"
+            };
+            var mockSettings = new Mock<IOptions<SecuritySettings>>();
+            mockSettings.Setup(m => m.Value).Returns(() => settings);
+
+            var email = "test@test.com";
+            var service = new JwtTokenService(new List<ISecurityService> { new Rs256SecurityService(mockSettings.Object) }, mockSettings.Object);
+            var result = service.GenerateToken(email);
+
+            var token = result;
+            Assert.IsNotNull(token);
+
+            var jwtToken = service.Read(token);
+            Assert.IsNotNull(jwtToken);
+            Assert.AreEqual(jwtToken.Audiences.FirstOrDefault(), settings.Audience);
+            Assert.AreEqual(jwtToken.Issuer, settings.Issuer);
+            Assert.AreEqual(jwtToken.Subject, email);
+            Assert.AreEqual(jwtToken.ValidFrom.AddSeconds(tokenExpiration.TotalSeconds), jwtToken.ValidTo);
+            Assert.IsTrue(jwtToken.Claims.Any(c => c.Type == "email" && c.Value == email));
+        }
 
         [TestMethod]
         public void Read_Success()
@@ -80,7 +108,6 @@ namespace ReportingSystem.Tests.Authentication
                 Assert.AreEqual(ex.Message, "Invalid security type");
             }
         }
-
 
         [TestMethod]
         public void ValidateRS256Token_Success()

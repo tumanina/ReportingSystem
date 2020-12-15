@@ -6,6 +6,13 @@ namespace ReportingSystem.Shared.Interfaces.Authentification
     public interface IJwtTokenService
     {
         /// <summary>
+        /// Generate a JWT token
+        /// </summary>
+        /// <param name="token">A string with raw token</param>
+        /// <returns>string</returns>
+        string GenerateToken(string email);
+
+        /// <summary>
         /// Reads and validates the JWT token from a string
         /// </summary>
         /// <param name="token">A string with raw token</param>

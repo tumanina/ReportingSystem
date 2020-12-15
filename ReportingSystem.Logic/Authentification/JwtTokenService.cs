@@ -24,6 +24,29 @@ namespace ReportingSystem.Logic.Authentification
             _securitySettings = securitySettings.Value;
         }
 
+        public string GenerateToken(string email)
+        {
+            var dateTimeNowInUtc = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds();
+            var expiresDateTime = DateTime.UtcNow.AddSeconds(_securitySettings.TokenExpiration.TotalSeconds);
+            var payload = new JwtPayload
+            {
+                { "sub", email },
+                { "email", email },
+                { "iat", dateTimeNowInUtc },
+                { "nbf", dateTimeNowInUtc },
+                { "exp", ((DateTimeOffset)expiresDateTime).ToUnixTimeSeconds() },
+                { "iss", _securitySettings.Issuer },
+                { "aud", _securitySettings.Audience }
+            };
+
+            var token = new JwtSecurityToken(new JwtHeader(GetSigningCredentials()), payload);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var encodedJwt = tokenHandler.WriteToken(token);
+
+            return encodedJwt;
+        }
+
         public JwtSecurityToken Read(string token)
         {
             try
@@ -66,11 +89,7 @@ namespace ReportingSystem.Logic.Authentification
 
             try
             {
-                var securityService = _securityServices.FirstOrDefault(s => s.Type == type);
-                if (securityService == null)
-                {
-                    throw new Exception($"Service for type '{type}' not found");
-                }
+                var securityService = GetSecurityService(_securitySettings.SecurityType);
 
                 var validationParameters = new TokenValidationParameters
                 {
@@ -112,6 +131,31 @@ namespace ReportingSystem.Logic.Authentification
             }
 
             return result;
+        }
+
+        private SigningCredentials GetSigningCredentials()
+        {
+            var securityService = GetSecurityService(_securitySettings.SecurityType);
+
+            var securityKey = securityService.GetSecurityKey();
+
+            if (securityKey == null)
+            {
+                return null;
+            }
+
+            return new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256, SecurityAlgorithms.Sha256Digest);
+        }
+
+        private ISecurityService GetSecurityService(SecurityTypeEnum type)
+        {
+            var securityService = _securityServices.FirstOrDefault(s => s.Type == type);
+            if (securityService == null)
+            {
+                throw new Exception($"Service for type '{type}' not found");
+            }
+
+            return securityService;
         }
     }
 }

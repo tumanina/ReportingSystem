@@ -21,6 +21,7 @@ using ReportingSystem.Shared.Interfaces.Authentification;
 using ReportingSystem.Web.Authentication;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace ReportingSystem.Web
@@ -102,6 +103,17 @@ namespace ReportingSystem.Web
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Reporting service", Version = "v1" });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = JwtBearerDefaults.AuthenticationScheme }
+                            },
+                            new List<string>()
+                        }
+                    });
 
                 c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
                 {

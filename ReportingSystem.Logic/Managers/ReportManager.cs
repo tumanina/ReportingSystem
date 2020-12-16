@@ -26,7 +26,7 @@ namespace ReportingSystem.Logic.Services
         public async Task<ReportModel> Deploy(string fileName, string groupId, string name)
         {
             var file = await _fileService.GetFile(fileName);
-            var fileStream = file.FileStream;
+            var fileStream = file?.FileStream;
             if (fileStream == null)
             {
                 throw new Exception($"File {fileName} is empty.");

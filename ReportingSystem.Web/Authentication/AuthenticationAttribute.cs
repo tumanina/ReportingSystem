@@ -19,10 +19,12 @@ namespace ReportingSystem.Web.Authentication
     public class AuthenticationFilter : IAsyncAuthorizationFilter
     {
         private readonly IJwtTokenService _tokenService;
+        private readonly IAuthorizationService _authorizationService;
 
-        public AuthenticationFilter(IJwtTokenService tokenService)
+        public AuthenticationFilter(IJwtTokenService tokenService, IAuthorizationService authorizationService)
         {
             _tokenService = tokenService;
+            _authorizationService = authorizationService;
         }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -49,7 +51,10 @@ namespace ReportingSystem.Web.Authentication
                 var jwtTokenString = authHeader.Parameter;
                 var token = _tokenService.Read(jwtTokenString);
 
-                var hasAccess = true;
+                var controller = context.HttpContext.Request.RouteValues.GetValueOrDefault("controller").ToString();
+                var action = context.HttpContext.Request.RouteValues.GetValueOrDefault("action").ToString();
+
+                var hasAccess = await _authorizationService.UserHasAccess(token.Subject, $"{controller}/{action}");
                 if (!hasAccess)
                 {
                     context.Result = new ForbidResult();

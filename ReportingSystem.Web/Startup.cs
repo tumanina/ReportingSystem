@@ -11,6 +11,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using ReportingSystem.AzureStorage;
 using ReportingSystem.Dal.DbContexts;
+using ReportingSystem.Dal.Services;
 using ReportingSystem.Logic.Authentification;
 using ReportingSystem.Logic.Services;
 using ReportingSystem.PowerBI;
@@ -48,8 +49,7 @@ namespace ReportingSystem.Web
             services.AddSwaggerGenNewtonsoftSupport();
 
             var connectionString = Configuration.GetConnectionString("DBConnectionString");
-            services.AddDbContext<ReportingDbContext>(
-                options => options.UseSqlServer(connectionString));
+            services.AddDbContext<ReportingDbContext>(options => options.UseSqlServer(connectionString));
 
             services.Configure<AzureStorageConfiguration>(Configuration.GetSection(nameof(AzureStorageConfiguration)));
             services.Configure<PowerBiConfiguration>(Configuration.GetSection(nameof(PowerBiConfiguration)));
@@ -58,9 +58,12 @@ namespace ReportingSystem.Web
             services.ConfigurePowerBiServices();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IReportService, ReportService>();
-            services.AddSingleton<IAccountService, AccountService>();
-            services.AddSingleton<IJwtTokenService, JwtTokenService>();
-            services.AddSingleton<ISecurityService, Rs256SecurityService>();
+            services.AddScoped<IReportManager, ReportManager>(); 
+            services.AddScoped<IAuthorizationService, AuthorizationService>();
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IAccountDalService, AccountDalService>();
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<ISecurityService, Rs256SecurityService>();
 
             services.ConfigureAuth();
 

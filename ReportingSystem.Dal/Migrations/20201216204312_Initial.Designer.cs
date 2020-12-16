@@ -10,7 +10,7 @@ using ReportingSystem.Dal.DbContexts;
 namespace ReportingSystem.Dal.Migrations
 {
     [DbContext(typeof(ReportingDbContext))]
-    [Migration("20201212152223_Initial")]
+    [Migration("20201216204312_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,7 +40,8 @@ namespace ReportingSystem.Dal.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -61,7 +62,8 @@ namespace ReportingSystem.Dal.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -70,7 +72,7 @@ namespace ReportingSystem.Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Actionss");
+                    b.ToTable("Actions");
                 });
 
             modelBuilder.Entity("ReportingSystem.Dal.Entities.AccountActionEntity", b =>

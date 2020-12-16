@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ReportingSystem.Dal.Entities;
+using System;
 
 namespace ReportingSystem.Dal.Configurations
 {
@@ -8,9 +9,11 @@ namespace ReportingSystem.Dal.Configurations
     {
         public void Configure(EntityTypeBuilder<ActionEntity> builder)
         {
-            builder.ToTable("Actionss");
+            builder.ToTable("Actions");
 
             builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.Id).HasDefaultValueSql("NEWID()");
 
             builder.Property(x => x.Name)
                    .HasMaxLength(100)

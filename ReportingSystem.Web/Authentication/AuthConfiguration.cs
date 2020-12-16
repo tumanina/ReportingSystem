@@ -15,8 +15,8 @@ namespace ReportingSystem.Web.Authentication
             using (var provider = services.BuildServiceProvider())
             {
                 var  tokenService = provider.GetRequiredService<IJwtTokenService>();
-                services.AddSingleton<IAsyncAuthorizationFilter, AuthenticationFilter>();
-                services.AddSingleton<IAuthenticationHandler, JwtTokenAuthorizationHandler>();
+                services.AddScoped<IAsyncAuthorizationFilter, AuthenticationFilter>();
+                services.AddScoped<IAuthenticationHandler, JwtTokenAuthorizationHandler>();
 
                 services.AddAuthentication(DefaultScheme)
                     .AddScheme<AuthenticationSchemeOptions, JwtTokenAuthorizationHandler>(JwtTokenAuthorizationHandler.AuthenticationScheme, _ => { })

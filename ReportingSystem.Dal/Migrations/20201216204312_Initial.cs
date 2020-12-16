@@ -11,7 +11,7 @@ namespace ReportingSystem.Dal.Migrations
                 name: "Accounts",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
@@ -21,15 +21,15 @@ namespace ReportingSystem.Dal.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Actionss",
+                name: "Actions",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Actionss", x => x.Id);
+                    table.PrimaryKey("PK_Actions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -49,9 +49,9 @@ namespace ReportingSystem.Dal.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AccountActions_Actionss_ActionId",
+                        name: "FK_AccountActions_Actions_ActionId",
                         column: x => x.ActionId,
-                        principalTable: "Actionss",
+                        principalTable: "Actions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -71,7 +71,7 @@ namespace ReportingSystem.Dal.Migrations
                 name: "Accounts");
 
             migrationBuilder.DropTable(
-                name: "Actionss");
+                name: "Actions");
         }
     }
 }

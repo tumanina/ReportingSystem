@@ -38,7 +38,8 @@ namespace ReportingSystem.Dal.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -59,7 +60,8 @@ namespace ReportingSystem.Dal.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -68,7 +70,7 @@ namespace ReportingSystem.Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Actionss");
+                    b.ToTable("Actions");
                 });
 
             modelBuilder.Entity("ReportingSystem.Dal.Entities.AccountActionEntity", b =>

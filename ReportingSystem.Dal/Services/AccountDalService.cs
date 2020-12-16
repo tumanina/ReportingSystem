@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ReportingSystem.Dal.Services
 {
-    internal class AccountDalService : IAccountDalService
+    public class AccountDalService : IAccountDalService
     {
         private readonly ReportingDbContext _dbContext;
 

@@ -4,6 +4,7 @@ using ReportingSystem.Shared.Configuration;
 using ReportingSystem.Shared.Enums;
 using ReportingSystem.Shared.Interfaces.Authentification;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
@@ -19,6 +20,16 @@ namespace ReportingSystem.Logic.Authentification
         }
 
         public SecurityTypeEnum Type { get { return SecurityTypeEnum.RS256; } }
+
+        public string GenerateToken(JwtPayload payload)
+        {
+            var token = new JwtSecurityToken(new JwtHeader(GetSigningCredentials()), payload);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var encodedJwt = tokenHandler.WriteToken(token);
+
+            return encodedJwt;
+        }
 
         public SecurityKey GetSecurityKey()
         {
@@ -45,6 +56,19 @@ namespace ReportingSystem.Logic.Authentification
             }
 
             return null;
+        }
+
+
+        private SigningCredentials GetSigningCredentials()
+        {
+            var securityKey = GetSecurityKey();
+
+            if (securityKey == null)
+            {
+                return null;
+            }
+
+            return new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256, SecurityAlgorithms.Sha256Digest);
         }
     }
 }

@@ -26,25 +26,30 @@ namespace ReportingSystem.Logic.Authentification
 
         public string GenerateToken(string email)
         {
-            var dateTimeNowInUtc = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds();
-            var expiresDateTime = DateTime.UtcNow.AddSeconds(_securitySettings.TokenExpiration.TotalSeconds);
+            var dateTimeNow = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
+            var expiresDateTime = DateTime.Now.AddSeconds(_securitySettings.TokenExpiration.TotalSeconds);
             var payload = new JwtPayload
             {
                 { "sub", email },
                 { "email", email },
-                { "iat", dateTimeNowInUtc },
-                { "nbf", dateTimeNowInUtc },
-                { "exp", ((DateTimeOffset)expiresDateTime).ToUnixTimeSeconds() },
-                { "iss", _securitySettings.Issuer },
-                { "aud", _securitySettings.Audience }
+                { "iat", dateTimeNow },
+                { "nbf", dateTimeNow },
+                { "exp", ((DateTimeOffset)expiresDateTime).ToUnixTimeSeconds() }
             };
 
-            var token = new JwtSecurityToken(new JwtHeader(GetSigningCredentials()), payload);
+            if (_securitySettings.Audience != null)
+            {
+                payload.Add("aud", _securitySettings.Audience);
+            }
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var encodedJwt = tokenHandler.WriteToken(token);
+            if (_securitySettings.Issuer != null)
+            {
+                payload.Add("iss", _securitySettings.Issuer);
+            }
 
-            return encodedJwt;
+            var securityService = GetSecurityService(_securitySettings.SecurityType);
+
+            return securityService.GenerateToken(payload);
         }
 
         public JwtSecurityToken Read(string token)
@@ -131,20 +136,6 @@ namespace ReportingSystem.Logic.Authentification
             }
 
             return result;
-        }
-
-        private SigningCredentials GetSigningCredentials()
-        {
-            var securityService = GetSecurityService(_securitySettings.SecurityType);
-
-            var securityKey = securityService.GetSecurityKey();
-
-            if (securityKey == null)
-            {
-                return null;
-            }
-
-            return new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256, SecurityAlgorithms.Sha256Digest);
         }
 
         private ISecurityService GetSecurityService(SecurityTypeEnum type)

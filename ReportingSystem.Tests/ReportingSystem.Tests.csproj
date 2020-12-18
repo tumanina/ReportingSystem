@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Authentication\HS256SecurityServiceTests.cs" />
     <Compile Include="Authentication\JwtTokenServiceTests.cs" />
     <Compile Include="Authentication\RS256SecurityServiceTests.cs" />
   </ItemGroup>

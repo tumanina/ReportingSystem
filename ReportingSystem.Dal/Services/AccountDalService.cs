@@ -2,7 +2,7 @@
 using ReportingSystem.Dal.DbContexts;
 using ReportingSystem.Dal.Entities;
 using ReportingSystem.Dal.Mappers;
-using ReportingSystem.Shared.Interfaces;
+using ReportingSystem.Shared.Interfaces.DalServices;
 using ReportingSystem.Shared.Models;
 using System.Linq;
 using System.Threading.Tasks;

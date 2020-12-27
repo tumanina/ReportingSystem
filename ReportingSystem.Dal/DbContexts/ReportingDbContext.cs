@@ -10,6 +10,10 @@ namespace ReportingSystem.Dal.DbContexts
         { }
 
         public DbSet<AccountEntity> Accounts { get; set; }
+        public DbSet<GroupEntity> Groupsgr { get; set; }
+        public DbSet<ReportEntity> Reports { get; set; }
+        public DbSet<TemplateEntity> Templates { get; set; }
+        public DbSet<TemplateVersionEntity> TemplateVersions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -18,17 +22,10 @@ namespace ReportingSystem.Dal.DbContexts
             modelBuilder.ApplyConfiguration(new ActionEntityConfiguration());
             modelBuilder.ApplyConfiguration(new AccountEntityConfiguration());
             modelBuilder.ApplyConfiguration(new AccountActionEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new GroupEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new ReportEntityConfigurationConfiguration());
+            modelBuilder.ApplyConfiguration(new TemplateEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new TemplateVersionEntityConfiguration());
         }
     }
-
-    /*internal class CoreDesignTimeDbContextFactory : IDesignTimeDbContextFactory<ReportingDbContext>
-    {
-        public ReportingDbContext CreateDbContext(string[] args)
-        {
-            return new ReportingDbContext(
-                new DbContextOptionsBuilder<ReportingDbContext>()
-                .UseSqlServer(SettingsHelper.GetCoreSettings()?.DbConnectionString)
-                .Options);
-        }
-    }*/
 }

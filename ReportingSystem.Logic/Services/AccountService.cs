@@ -1,5 +1,5 @@
-﻿using ReportingSystem.Shared.Interfaces;
-using ReportingSystem.Shared.Interfaces.Authentification;
+﻿using ReportingSystem.Shared.Interfaces.Authentification;
+using ReportingSystem.Shared.Interfaces.DalServices;
 using ReportingSystem.Shared.Models;
 using System.Threading.Tasks;
 

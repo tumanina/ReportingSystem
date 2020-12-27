@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using ReportingSystem.Shared.Interfaces;
 using ReportingSystem.Web.Authentication;
 using ReportingSystem.Web.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace ReportingSystem.Web.Controllers
@@ -25,7 +26,7 @@ namespace ReportingSystem.Web.Controllers
         {
             return await Execute<ReportApiModel>(async () =>
             {
-                var deployedReport = await _reportManager.Deploy(reportModel.FileName, reportModel.GroupId, reportModel.Name);
+                var deployedReport = await _reportManager.Deploy(reportModel.FileName, reportModel.Name, reportModel.GroupId);
 
                 return new ReportApiModel { Id = deployedReport.Id, Name = deployedReport.Name, DatasetId = deployedReport.DatasetId };
             });
@@ -33,11 +34,11 @@ namespace ReportingSystem.Web.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<BaseApiModel> DeleteReport(string id, string groupId)
+        public async Task<BaseApiModel> DeleteReport(Guid id)
         {
             return await Execute(async () =>
             {
-                await _reportManager.DeleteReport(groupId, id);
+                await _reportManager.DeleteReport(id);
             });
         }
     }

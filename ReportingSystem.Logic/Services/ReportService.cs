@@ -1,5 +1,7 @@
 ﻿using ReportingSystem.Shared.Interfaces;
+using ReportingSystem.Shared.Interfaces.DalServices;
 using ReportingSystem.Shared.Models;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -7,26 +9,21 @@ namespace ReportingSystem.Logic.Services
 {
     public class ReportService : IReportService
     {
-        private readonly IReportEngineTool _reportEngineTool;
+        private readonly IReportDalService _dalService;
 
-        public ReportService(IReportEngineTool reportEngineTool)
+        public ReportService(IReportDalService dalService)
         {
-            _reportEngineTool = reportEngineTool;
+            _dalService = dalService;
         }
 
-        public async Task<ReportModel> CreateReport(string groupId, string templateReportId, string name)
+        public async Task<Guid> CreateReport(Guid groupId, string name)
         {
-            return await _reportEngineTool.CreateReport(groupId, templateReportId, name);
+            return await _dalService.AddReport(new ReportModel { GroupId = groupId, Name = name });
         }
 
-        public async Task DeleteReport(string groupId, string reportId)
+        public async Task DeleteReport(Guid reportId)
         {
-            await _reportEngineTool.DeleteReport(groupId, reportId);
-        }
-
-        public async Task<ReportModel> Deploy(Stream file, string groupId, string name)
-        {
-            return await _reportEngineTool.Deploy(file, groupId, name);
+            await _dalService.DeleteReport(reportId);
         }
 
     }

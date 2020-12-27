@@ -10,17 +10,25 @@ namespace ReportingSystem.Logic.Services
     {
         private readonly IReportService _reportService;
         private readonly IFileService _fileService;
+        private readonly IReportEngineTool _reportEngineTool;
 
-        public ReportManager(IReportService reportService, IFileService fileService)
+        public ReportManager(IReportService reportService, IFileService fileService, IReportEngineTool reportEngineTool)
         {
             _reportService = reportService;
             _fileService = fileService;
+            _reportEngineTool = reportEngineTool;
         }
 
-
-        public async Task DeleteReport(string groupId, string reportId)
+        public async Task<ReportModel> CreateReport(string groupId, string templateReportId, string name)
         {
-            await _reportService.DeleteReport(groupId, reportId);
+            var report = await _reportEngineTool.CreateReport(groupId, templateReportId, name);
+
+            return new ReportModel { Name = name };
+        }
+
+        public async Task DeleteReport(Guid reportId)
+        {
+            await _reportService.DeleteReport(reportId);
         }
 
         public async Task<ReportModel> Deploy(string fileName, string groupId, string name)
@@ -32,7 +40,9 @@ namespace ReportingSystem.Logic.Services
                 throw new Exception($"File {fileName} is empty.");
             }
 
-            return await _reportService.Deploy(fileStream, groupId, name);
+            var report = await _reportEngineTool.Deploy(fileStream, groupId, name);
+
+            return new ReportModel { Name = name };
         }
     }
 }

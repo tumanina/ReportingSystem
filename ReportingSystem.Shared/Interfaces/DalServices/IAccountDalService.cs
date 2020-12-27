@@ -1,7 +1,7 @@
 ﻿using ReportingSystem.Shared.Models;
 using System.Threading.Tasks;
 
-namespace ReportingSystem.Shared.Interfaces
+namespace ReportingSystem.Shared.Interfaces.DalServices
 {
     public interface IAccountDalService
     {

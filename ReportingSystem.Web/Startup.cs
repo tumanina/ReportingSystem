@@ -18,6 +18,7 @@ using ReportingSystem.PowerBI;
 using ReportingSystem.Shared.Configuration;
 using ReportingSystem.Shared.Interfaces;
 using ReportingSystem.Shared.Interfaces.Authentification;
+using ReportingSystem.Shared.Interfaces.DalServices;
 using ReportingSystem.Web.Authentication;
 using ReportingSystem.Web.Filters;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -65,6 +66,9 @@ namespace ReportingSystem.Web
             services.AddScoped<IAuthorizationService, AuthorizationService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAccountDalService, AccountDalService>();
+            services.AddScoped<IReportDalService, ReportDalService>();
+            services.AddScoped<ITemplateDalService, TemplateDalService>();
+            services.AddScoped<ITemplateVersionDalService, TemplateVersionDalService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<ISecurityService, Rs256SecurityService>();
 

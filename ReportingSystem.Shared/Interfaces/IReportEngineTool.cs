@@ -7,8 +7,8 @@ namespace ReportingSystem.Shared.Interfaces
     public interface IReportEngineTool
     {
         Task<string> CreateGroup(string name);
-        Task<ReportModel> CreateReport(string groupId, string templateReportId, string name);
+        Task<ReportEngineToolReportModel> CreateReport(string groupId, string templateReportId, string name);
         Task DeleteReport(string groupId, string reportId);
-        Task<ReportModel> Deploy(Stream file, string groupId, string datasetName);
+        Task<ReportEngineToolReportModel> Deploy(Stream file, string groupId, string datasetName);
     }
 }

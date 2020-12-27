@@ -25,7 +25,7 @@ namespace ReportingSystem.PowerBI
             _powerBiConfiguration = powerBiConfiguration.Value;
         }
 
-        public async Task<ReportModel> CreateReport(string groupReportId, string templateReportId, string name)
+        public async Task<ReportEngineToolReportModel> CreateReport(string groupReportId, string templateReportId, string name)
         {
             if (Guid.TryParse(templateReportId, out Guid powerBiReportId) && Guid.TryParse(groupReportId, out Guid powerBiGroupId))
             {
@@ -33,7 +33,7 @@ namespace ReportingSystem.PowerBI
                 {
                     var clonedReport = await client.Reports.CloneReportInGroupAsync(powerBiGroupId, powerBiReportId, new CloneReportRequest(name));
 
-                    return new ReportModel
+                    return new ReportEngineToolReportModel
                     {
                         Id = clonedReport.Id.ToString(),
                         DatasetId = clonedReport.DatasetId
@@ -64,7 +64,7 @@ namespace ReportingSystem.PowerBI
                 });
             }
         }
-        public async Task<ReportModel> Deploy(Stream file, string groupId, string datasetName)
+        public async Task<ReportEngineToolReportModel> Deploy(Stream file, string groupId, string datasetName)
         {
             if (Guid.TryParse(groupId, out Guid powerBiGroupId))
             {
@@ -84,7 +84,7 @@ namespace ReportingSystem.PowerBI
                     var report = client.Imports.GetImportInGroup(powerBiGroupId, import.Id).Reports[0];
                     report = client.Reports.GetReportInGroup(powerBiGroupId, report.Id);
 
-                    return new ReportModel { Id = report.Id.ToString(), DatasetId = report.DatasetId };
+                    return new ReportEngineToolReportModel { Id = report.Id.ToString(), DatasetId = report.DatasetId };
                 });
             }
             return null;

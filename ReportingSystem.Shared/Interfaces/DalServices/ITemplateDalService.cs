@@ -7,8 +7,8 @@ namespace ReportingSystem.Shared.Interfaces.DalServices
 {
 	public interface ITemplateDalService
 	{
-		Task<IEnumerable<TemplateModel>> GetTemplates(string customerCode);
-		Task<TemplateModel> GetTemplate(string customerCode, long id);
+		Task<IEnumerable<TemplateModel>> GetTemplates();
+		Task<TemplateModel> GetTemplate(Guid id);
 		Task<Guid> AddTemplate(TemplateModel model);
 		Task DeleteTemplate(TemplateModel model);
 	}

@@ -7,5 +7,7 @@ namespace ReportingSystem.Shared.Models
         public string Name { get; set; }
 
         public IEnumerable<ReportModel> Reports { get; set; }
+
+        public IEnumerable<ReportEngineToolGroupModel> ReportEngineToolGroups { get; set; }
     }
 }

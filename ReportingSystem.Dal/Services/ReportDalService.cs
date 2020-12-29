@@ -19,9 +19,9 @@ namespace ReportingSystem.Dal.Services
             _dbContext = dbContext;
         }
 
-        public async Task<ReportModel> GetReport(long id)
+        public async Task<ReportModel> GetReport(Guid id)
         {
-            var query = _dbContext.Reports.Include(r => r.Group).Include(r => r.Template);
+            var query = _dbContext.Reports.Where(r => r.Id == id).Include(r => r.Group).Include(r => r.Template);
             var report = await query.FirstOrDefaultAsync();
             if (report == null)
             {

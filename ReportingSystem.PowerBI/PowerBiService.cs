@@ -5,6 +5,7 @@ using Microsoft.PowerBI.Api.Models;
 using Microsoft.Rest;
 using ReportingSystem.PowerBI.Interfaces;
 using ReportingSystem.Shared.Configuration;
+using ReportingSystem.Shared.Enums;
 using ReportingSystem.Shared.Interfaces;
 using ReportingSystem.Shared.Models;
 using System;
@@ -14,11 +15,13 @@ using System.Threading.Tasks;
 
 namespace ReportingSystem.PowerBI
 {
-    public class PowerBiService: IReportEngineTool
+    public class PowerBiService : IReportEngineTool
     {
         private readonly PowerBiConfiguration _powerBiConfiguration;
         private readonly IAuthService _authService;
-        
+
+        public ReportEngineToolEnum ReportEngineTool =>  ReportEngineToolEnum.PowerBi;
+
         public PowerBiService(IAuthService authService, IOptions<PowerBiConfiguration> powerBiConfiguration)
         {
             _authService = authService;
@@ -35,7 +38,8 @@ namespace ReportingSystem.PowerBI
 
                     return new ReportEngineToolReportModel
                     {
-                        Id = clonedReport.Id.ToString(),
+                        ReportEngineTool = ReportEngineTool,
+                        ReportId = clonedReport.Id.ToString(),
                         DatasetId = clonedReport.DatasetId
                     };
                 });
@@ -84,7 +88,7 @@ namespace ReportingSystem.PowerBI
                     var report = client.Imports.GetImportInGroup(powerBiGroupId, import.Id).Reports[0];
                     report = client.Reports.GetReportInGroup(powerBiGroupId, report.Id);
 
-                    return new ReportEngineToolReportModel { Id = report.Id.ToString(), DatasetId = report.DatasetId };
+                    return new ReportEngineToolReportModel { ReportId = report.Id.ToString(), DatasetId = report.DatasetId, ReportEngineTool = ReportEngineTool };
                 });
             }
             return null;

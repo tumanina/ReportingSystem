@@ -21,14 +21,12 @@ namespace ReportingSystem.Web.Controllers
         }
 
         [HttpPost]
-        [Route("deploy")]
-        public async Task<BaseApiDataModel<ReportApiModel>> Deploy(DeployReportApiModel reportModel)
+        [Route("{reportId}/deploy")]
+        public async Task<BaseApiModel> Deploy(Guid reportId, DeployReportApiModel reportModel)
         {
-            return await Execute<ReportApiModel>(async () =>
+            return await Execute(async () =>
             {
-                var deployedReport = await _reportManager.Deploy(reportModel.FileName, reportModel.Name, reportModel.GroupId);
-
-                return new ReportApiModel { Id = deployedReport.Id, Name = deployedReport.Name, DatasetId = deployedReport.DatasetId };
+                await _reportManager.Deploy(reportModel.ReportEngineTool, reportId, reportModel.TemplateVersionId);
             });
         }
 

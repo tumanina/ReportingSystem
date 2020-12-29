@@ -19,15 +19,15 @@ namespace ReportingSystem.Dal.Services
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<TemplateModel>> GetTemplates(string customerCode)
+        public async Task<IEnumerable<TemplateModel>> GetTemplates()
         {
             var templates = await _dbContext.Templates.Include(t => t.Versions).ToListAsync();
             return templates.Select(r => r.Map());
         }
 
-        public async Task<TemplateModel> GetTemplate(string customerCode, long id)
+        public async Task<TemplateModel> GetTemplate(Guid id)
         {
-            var query = _dbContext.Templates.Include(t => t.Versions);
+            var query = _dbContext.Templates.Where(t => t.Id == id).Include(t => t.Versions);
             var template = await query.FirstOrDefaultAsync();
             if (template == null)
             {

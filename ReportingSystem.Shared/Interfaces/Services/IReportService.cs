@@ -7,6 +7,7 @@ namespace ReportingSystem.Shared.Interfaces
 {
     public interface IReportService
     {
+        Task<ReportModel> GetReport(Guid reportId);
         Task<Guid> CreateReport(Guid groupId, string name);
         Task DeleteReport(Guid reportId);
     }

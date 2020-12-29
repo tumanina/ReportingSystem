@@ -8,7 +8,7 @@ namespace ReportingSystem.Shared.Interfaces.DalServices
     public interface IReportDalService
 	{
 		Task<IEnumerable<ReportModel>> GetReports();
-		Task<ReportModel> GetReport(long id);
+		Task<ReportModel> GetReport(Guid id);
 		Task<Guid> AddReport(ReportModel model);
 		Task DeleteReport(Guid id);
 	}

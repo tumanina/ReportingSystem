@@ -1,11 +1,13 @@
-﻿namespace ReportingSystem.Shared.Models
-{
-    public class ReportEngineToolReportModel
-    {
-        public string Id { get; set; }
+﻿using ReportingSystem.Shared.Enums;
 
-        public string Name { get; set; }
+namespace ReportingSystem.Shared.Models
+{
+    public class ReportEngineToolReportModel : BaseModel
+    {
+        public string ReportId { get; set; }
 
         public string DatasetId { get; set; }
+
+        public ReportEngineToolEnum ReportEngineTool { get; set; }
     }
 }

@@ -2,7 +2,6 @@
 using ReportingSystem.Shared.Interfaces.DalServices;
 using ReportingSystem.Shared.Models;
 using System;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace ReportingSystem.Logic.Services
@@ -26,5 +25,9 @@ namespace ReportingSystem.Logic.Services
             await _dalService.DeleteReport(reportId);
         }
 
+        public async Task<ReportModel> GetReport(Guid reportId)
+        {
+            return await _dalService.GetReport(reportId);
+        }
     }
 }

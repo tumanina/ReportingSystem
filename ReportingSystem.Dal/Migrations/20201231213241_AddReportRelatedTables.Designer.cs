@@ -10,7 +10,7 @@ using ReportingSystem.Dal.DbContexts;
 namespace ReportingSystem.Dal.Migrations
 {
     [DbContext(typeof(ReportingDbContext))]
-    [Migration("20201227132453_AddReportRelatedTables")]
+    [Migration("20201231213241_AddReportRelatedTables")]
     partial class AddReportRelatedTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -93,7 +93,7 @@ namespace ReportingSystem.Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GroupEntity");
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("ReportingSystem.Dal.Entities.ReportEntity", b =>
@@ -124,7 +124,7 @@ namespace ReportingSystem.Dal.Migrations
 
                     b.HasIndex("TemplateId");
 
-                    b.ToTable("ReportEntity");
+                    b.ToTable("Reports");
                 });
 
             modelBuilder.Entity("ReportingSystem.Dal.Entities.TemplateEntity", b =>
@@ -145,7 +145,7 @@ namespace ReportingSystem.Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TemplateEntity");
+                    b.ToTable("Templates");
                 });
 
             modelBuilder.Entity("ReportingSystem.Dal.Entities.TemplateVersionEntity", b =>
@@ -174,7 +174,7 @@ namespace ReportingSystem.Dal.Migrations
 
                     b.HasIndex("TemplateId");
 
-                    b.ToTable("TemplateVersionEntity");
+                    b.ToTable("TemplateVersions");
                 });
 
             modelBuilder.Entity("ReportingSystem.Dal.Entities.AccountActionEntity", b =>

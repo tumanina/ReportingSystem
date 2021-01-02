@@ -10,7 +10,7 @@ namespace ReportingSystem.Dal.DbContexts
         { }
 
         public DbSet<AccountEntity> Accounts { get; set; }
-        public DbSet<GroupEntity> Groupsgr { get; set; }
+        public DbSet<GroupEntity> Groups { get; set; }
         public DbSet<ReportEntity> Reports { get; set; }
         public DbSet<TemplateEntity> Templates { get; set; }
         public DbSet<TemplateVersionEntity> TemplateVersions { get; set; }

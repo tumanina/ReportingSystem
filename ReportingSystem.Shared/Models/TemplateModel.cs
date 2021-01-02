@@ -8,6 +8,6 @@ namespace ReportingSystem.Shared.Models
 
         public virtual IEnumerable<ReportModel> Reports { get; set; }
 
-        public virtual IEnumerable<TemplateVersionModel> Versions { get; set; }
+        public virtual IEnumerable<TemplateVersionModel> Versions { get; set; } = new List<TemplateVersionModel>();
     }
 }

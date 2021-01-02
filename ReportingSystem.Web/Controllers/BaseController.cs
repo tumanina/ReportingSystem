@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ReportingSystem.Shared.Extensions;
+using ReportingSystem.Web.Authentication;
 using ReportingSystem.Web.Models;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 namespace ReportingSystem.Web.Controllers
 {
     [ApiController]
+    [Authentication]
     public abstract class BaseController : ControllerBase
     {
         private readonly ILogger<ControllerBase> _logger;

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 namespace ReportingSystem.Web.Controllers
 {
     [Route("api/v1/files")]
-    [Authentication]
     public class StorageFilesController : BaseController
     {
         private readonly IFileService _fileStorageService;

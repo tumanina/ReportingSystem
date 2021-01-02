@@ -8,7 +8,7 @@ namespace ReportingSystem.Dal.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "GroupEntity",
+                name: "Groups",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
@@ -18,11 +18,11 @@ namespace ReportingSystem.Dal.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GroupEntity", x => x.Id);
+                    table.PrimaryKey("PK_Groups", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TemplateEntity",
+                name: "Templates",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
@@ -32,11 +32,11 @@ namespace ReportingSystem.Dal.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TemplateEntity", x => x.Id);
+                    table.PrimaryKey("PK_Templates", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ReportEntity",
+                name: "Reports",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
@@ -48,23 +48,23 @@ namespace ReportingSystem.Dal.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReportEntity", x => x.Id);
+                    table.PrimaryKey("PK_Reports", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ReportEntity_GroupEntity_GroupId",
+                        name: "FK_Reports_Groups_GroupId",
                         column: x => x.GroupId,
-                        principalTable: "GroupEntity",
+                        principalTable: "Groups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ReportEntity_TemplateEntity_TemplateId",
+                        name: "FK_Reports_Templates_TemplateId",
                         column: x => x.TemplateId,
-                        principalTable: "TemplateEntity",
+                        principalTable: "Templates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TemplateVersionEntity",
+                name: "TemplateVersions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
@@ -76,44 +76,44 @@ namespace ReportingSystem.Dal.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TemplateVersionEntity", x => x.Id);
+                    table.PrimaryKey("PK_TemplateVersions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TemplateVersionEntity_TemplateEntity_TemplateId",
+                        name: "FK_TemplateVersions_Templates_TemplateId",
                         column: x => x.TemplateId,
-                        principalTable: "TemplateEntity",
+                        principalTable: "Templates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReportEntity_GroupId",
-                table: "ReportEntity",
+                name: "IX_Reports_GroupId",
+                table: "Reports",
                 column: "GroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReportEntity_TemplateId",
-                table: "ReportEntity",
+                name: "IX_Reports_TemplateId",
+                table: "Reports",
                 column: "TemplateId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TemplateVersionEntity_TemplateId",
-                table: "TemplateVersionEntity",
+                name: "IX_TemplateVersions_TemplateId",
+                table: "TemplateVersions",
                 column: "TemplateId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ReportEntity");
+                name: "Reports");
 
             migrationBuilder.DropTable(
-                name: "TemplateVersionEntity");
+                name: "TemplateVersions");
 
             migrationBuilder.DropTable(
-                name: "GroupEntity");
+                name: "Groups");
 
             migrationBuilder.DropTable(
-                name: "TemplateEntity");
+                name: "Templates");
         }
     }
 }

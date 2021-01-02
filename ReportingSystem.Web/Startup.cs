@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,14 +15,17 @@ using ReportingSystem.AzureStorage;
 using ReportingSystem.Dal.DbContexts;
 using ReportingSystem.Dal.Services;
 using ReportingSystem.Logic.Authentification;
+using ReportingSystem.Logic.Managers;
 using ReportingSystem.Logic.Services;
 using ReportingSystem.PowerBI;
 using ReportingSystem.Shared.Configuration;
+using ReportingSystem.Shared.Extensions;
 using ReportingSystem.Shared.Interfaces;
 using ReportingSystem.Shared.Interfaces.Authentification;
 using ReportingSystem.Shared.Interfaces.DalServices;
 using ReportingSystem.Web.Authentication;
 using ReportingSystem.Web.Filters;
+using ReportingSystem.Web.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.Collections.Generic;
@@ -40,8 +45,8 @@ namespace ReportingSystem.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers(config =>
-                config.Filters.Add(new UserIdHeaderRequiredFilter()))
+            services.AddControllers(/*config =>
+                config.Filters.Add(new UserIdHeaderRequiredFilter())*/)
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.Converters.Add(new StringEnumConverter());
@@ -62,7 +67,9 @@ namespace ReportingSystem.Web
             services.ConfigurePowerBiServices();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IReportService, ReportService>();
-            services.AddScoped<IReportManager, ReportManager>(); 
+            services.AddScoped<ITemplateService, TemplateService>(); 
+            services.AddScoped<IReportManager, ReportManager>();
+            services.AddScoped<ITemplateManager, TemplateManager>();
             services.AddScoped<IAuthorizationService, AuthorizationService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAccountDalService, AccountDalService>();
@@ -102,6 +109,15 @@ namespace ReportingSystem.Web
             {
                 endpoints.MapControllers();
             });
+
+            app.UseExceptionHandler(a => a.Run(async context =>
+            {
+                var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+                var exception = exceptionHandlerPathFeature.Error;
+                context.Response.StatusCode = 200;
+                var message = new BaseApiModel { Errors = new List<string> { exception.GetMessage() } };
+                await context.Response.WriteAsync(JsonConvert.SerializeObject(message));
+            }));
         }
 
         private void ConfigureSwagger(IServiceCollection services)

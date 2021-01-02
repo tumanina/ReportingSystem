@@ -7,11 +7,11 @@ using ReportingSystem.Shared.Interfaces;
 using Microsoft.Extensions.Logging;
 using ReportingSystem.Web.Models;
 using System;
+using ReportingSystem.Shared.Enums;
 
 namespace ReportingSystem.Web.Controllers
 {
     [Route("api/v1/templates")]
-    [ApiController]
     public class TemplatesController : BaseController
     {
         private readonly ITemplateManager _templateManager;
@@ -29,13 +29,18 @@ namespace ReportingSystem.Web.Controllers
             {
                 var templates = await _templateManager.GetTemplates();
 
-                return templates.Select(t => new TemplateApiModel { Id = t.Id, Name = t.Name });
+                return templates.Select(t => new TemplateApiModel 
+                { 
+                    Id = t.Id, 
+                    Name = t.Name, 
+                    Versions = t.Versions?.Select(v => new TemplateVersionApiModel { FileName = v.FileName, Version = v.Version }) 
+                });
             });
         }
 
         [HttpPost]
         [Route("{templateId}/upload")]
-        public async Task<BaseApiModel> UploadTemplateFile(Guid templateId, string version)
+        public async Task<BaseApiModel> UploadTemplateFile(Guid templateId, string version, ChangesType? changesType = null)
         {
             if (Request.Form.Files.Count == 0)
             {
@@ -55,7 +60,7 @@ namespace ReportingSystem.Web.Controllers
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await file.CopyToAsync(stream);
-                        await _templateManager.UploadTemplateFile(templateId, stream, file.FileName, version);
+                        await _templateManager.UploadTemplateFile(templateId, stream, file.FileName, version, changesType);
                     }
                 }
             });

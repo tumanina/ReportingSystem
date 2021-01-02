@@ -8,6 +8,6 @@ namespace ReportingSystem.Shared.Models
 
         public IEnumerable<ReportModel> Reports { get; set; }
 
-        public IEnumerable<ReportEngineToolGroupModel> ReportEngineToolGroups { get; set; }
+        public IEnumerable<ReportEngineToolGroupModel> ReportEngineToolGroups { get; set; } = new List<ReportEngineToolGroupModel>();
     }
 }

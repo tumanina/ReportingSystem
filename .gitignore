@@ -18,3 +18,5 @@ ReportingSystem.Dal/obj/
 ReportingSystem.Dal/bin/
 ReportingSystem.Dal/ReportingSystem.Dal.csproj.user
 ReportingSystem.Logic/ReportingSystem.Logic.csproj.user
+ReportingSystem/obj/
+ReportingSystem/bin/

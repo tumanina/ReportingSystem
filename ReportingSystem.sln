@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportingSystem.AzureStorag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportingSystem.Tests", "ReportingSystem.Tests\ReportingSystem.Tests.csproj", "{9DAEB884-0394-4C11-B1A4-AA5CCEF90551}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportingSystem.Dal", "ReportingSystem.Dal\ReportingSystem.Dal.csproj", "{0FF6016C-6084-497A-AC6D-06788A0F9D19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportingSystem.Dal", "ReportingSystem.Dal\ReportingSystem.Dal.csproj", "{0FF6016C-6084-497A-AC6D-06788A0F9D19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportingSystem", "ReportingSystem\ReportingSystem.csproj", "{C87EBD24-4F6A-40C1-BFD5-58D4E8A31E5A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{0FF6016C-6084-497A-AC6D-06788A0F9D19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FF6016C-6084-497A-AC6D-06788A0F9D19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FF6016C-6084-497A-AC6D-06788A0F9D19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C87EBD24-4F6A-40C1-BFD5-58D4E8A31E5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C87EBD24-4F6A-40C1-BFD5-58D4E8A31E5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C87EBD24-4F6A-40C1-BFD5-58D4E8A31E5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C87EBD24-4F6A-40C1-BFD5-58D4E8A31E5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

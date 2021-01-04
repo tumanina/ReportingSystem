@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ReportingSystem.Shared.Interfaces;
-using ReportingSystem.Web.Authentication;
 using ReportingSystem.Web.Models;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -17,6 +17,15 @@ namespace ReportingSystem.Web.Controllers
             :base(logger)
         {
             _fileStorageService = fileStorageService;
+        }
+
+        [HttpGet]
+        public async Task<BaseApiDataModel<IEnumerable<string>>> GetFiles()
+        {
+            return await Execute(async () =>
+            {
+                return  await _fileStorageService.GetFiles();
+            });
         }
 
         [HttpPost]

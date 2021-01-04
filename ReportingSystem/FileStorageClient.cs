@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace ReportingSystem
 {
-    internal class FileStorageClient : IFileStorageClient
+    public class FileStorageClient : IFileStorageClient
     {
-        private string _token;
         private string _url;
+        private string _token;
 
-        public void ConfigureClient(string token, string url)
+        public void ConfigureClient(string url, string token)
         {
-            _token = token;
             _url = url;
+            _token = token;
         }
 
-        public async Task<IEnumerable<string>> GetFileNames()
+        public async Task<BaseApiDataModel<IEnumerable<string>>> GetFileNames()
         {
             using (var client = new HttpClient())
             {
@@ -27,7 +27,7 @@ namespace ReportingSystem
                 if (response.IsSuccessStatusCode)
                 {
                     var content = response.Content.ReadAsStringAsync().Result;
-                    return JsonConvert.DeserializeObject<IEnumerable<string>>(content);
+                    return JsonConvert.DeserializeObject<BaseApiDataModel<IEnumerable<string>>>(content);
                 }
                 else
                 {

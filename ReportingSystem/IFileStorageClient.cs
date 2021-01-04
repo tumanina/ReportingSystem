@@ -5,6 +5,6 @@ namespace ReportingSystem
 {
     public interface IFileStorageClient
     {
-        Task<IEnumerable<string>> GetFileNames();
+        Task<BaseApiDataModel<IEnumerable<string>>> GetFileNames();
     }
 }

@@ -3,6 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/tumanina/ReportingSystem</RepositoryUrl>
+    <Authors>tumanina</Authors>
+    <Company>tumanina</Company>
+    <Version>1.0.4</Version>
   </PropertyGroup>
 
   <ItemGroup>

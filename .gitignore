@@ -18,5 +18,6 @@ ReportingSystem.Dal/obj/
 ReportingSystem.Dal/bin/
 ReportingSystem.Dal/ReportingSystem.Dal.csproj.user
 ReportingSystem.Logic/ReportingSystem.Logic.csproj.user
+
+ReportingSystem/bin/Debug/netcoreapp3.1/
 ReportingSystem/obj/
-ReportingSystem/bin/

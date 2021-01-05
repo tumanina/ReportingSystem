@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -7,10 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using NSwag.Generation.Processors.Security;
 using ReportingSystem.AzureStorage;
 using ReportingSystem.Dal.DbContexts;
 using ReportingSystem.Dal.Services;
@@ -24,12 +23,8 @@ using ReportingSystem.Shared.Interfaces;
 using ReportingSystem.Shared.Interfaces.Authentification;
 using ReportingSystem.Shared.Interfaces.DalServices;
 using ReportingSystem.Web.Authentication;
-using ReportingSystem.Web.Filters;
 using ReportingSystem.Web.Models;
-using Swashbuckle.AspNetCore.SwaggerUI;
-using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace ReportingSystem.Web
 {
@@ -45,8 +40,8 @@ namespace ReportingSystem.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers(/*config =>
-                config.Filters.Add(new UserIdHeaderRequiredFilter())*/)
+            services.AddControllers(config =>
+                config.Filters.Add(new UserIdHeaderRequiredFilter()))
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.Converters.Add(new StringEnumConverter());
@@ -55,7 +50,6 @@ namespace ReportingSystem.Web
                     options.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.None;
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 });
-            services.AddSwaggerGenNewtonsoftSupport();
 
             var connectionString = Configuration.GetConnectionString("DBConnectionString");
             services.AddDbContext<ReportingDbContext>(options => options.UseSqlServer(connectionString));
@@ -94,12 +88,8 @@ namespace ReportingSystem.Web
 
             app.UseHttpsRedirection();
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Reporting service");
-                c.DocExpansion(DocExpansion.None);
-            });
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
 
             app.UseRouting();
             app.UseAuthentication();
@@ -122,35 +112,23 @@ namespace ReportingSystem.Web
 
         private void ConfigureSwagger(IServiceCollection services)
         {
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerDocument(config =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Reporting service", Version = "v1" });
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                config.PostProcess = document =>
+                {
+                    document.Info.Version = "v1";
+                    document.Info.Title = "Reporting service";
+                    document.SecurityDefinitions.Add("ApiKey", new NSwag.OpenApiSecurityScheme
                     {
-                        {
-                            new OpenApiSecurityScheme
-                            {
-                                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = JwtBearerDefaults.AuthenticationScheme }
-                            },
-                            new List<string>()
-                        }
+                        Description = "JWT Authorization header Token. Enter : \"Bearer YourTokenHere\"",
+                        Name = "Authorization",
+                        In = NSwag.OpenApiSecurityApiKeyLocation.Header,
+                        Type = NSwag.OpenApiSecuritySchemeType.ApiKey,
+                        Scheme = "bearer",
+                        BearerFormat = "JWT",
                     });
-
-                c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
-                {
-                    Description = "JWT Authorization header Token. Enter : \"Bearer YourTokenHere\"",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "bearer",
-                    BearerFormat = "JWT"
-                });
-                var files = Directory.GetFiles(AppContext.BaseDirectory, "*.xml");
-                foreach (var file in files)
-                {
-                    c.IncludeXmlComments(file);
-                }
+                };
+                config.OperationProcessors.Add(new OperationSecurityScopeProcessor("ApiKey"));
             });
         }
     }

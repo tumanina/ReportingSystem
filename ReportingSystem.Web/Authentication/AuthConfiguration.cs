@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 using ReportingSystem.Shared.Interfaces.Authentification;
+using System;
+using System.Linq;
 
 namespace ReportingSystem.Web.Authentication
 {
@@ -15,16 +18,25 @@ namespace ReportingSystem.Web.Authentication
             using (var provider = services.BuildServiceProvider())
             {
                 var  tokenService = provider.GetRequiredService<IJwtTokenService>();
-                services.AddScoped<IAsyncAuthorizationFilter, AuthenticationFilter>();
-                services.AddScoped<IAuthenticationHandler, JwtTokenAuthorizationHandler>();
+                services.AddScoped<IAsyncAuthorizationFilter, AuthorizationFilter>();
+                services.AddScoped<IAuthenticationHandler, JwtTokenAuthenticationHandler>();
+                services.AddScoped<IAuthenticationHandler, BasicAuthenticationHandler>();
 
                 services.AddAuthentication(DefaultScheme)
-                    .AddScheme<AuthenticationSchemeOptions, JwtTokenAuthorizationHandler>(JwtTokenAuthorizationHandler.AuthenticationScheme, _ => { })
-                    .AddPolicyScheme(DefaultScheme, "Authorization Bearer", polSchemOpt =>
+                    .AddScheme<AuthenticationSchemeOptions, JwtTokenAuthenticationHandler>(JwtTokenAuthenticationHandler.AuthenticationScheme, _ => { })
+                    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(BasicAuthenticationHandler.AuthenticationScheme, _ => { })
+                    .AddPolicyScheme(DefaultScheme, "Bearer or Basic Authentication", polSchemOpt =>
                     {
                         polSchemOpt.ForwardDefaultSelector = context =>
                         {
-                            return JwtTokenAuthorizationHandler.AuthenticationScheme;
+                            if (context.Request.Headers.TryGetValue(HeaderNames.Authorization, out var authValue))
+                            {
+                                if (authValue.First().StartsWith($"{JwtBearerDefaults.AuthenticationScheme} ", StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    return JwtBearerDefaults.AuthenticationScheme;
+                                }
+                            }
+                            return BasicAuthenticationHandler.AuthenticationScheme;
                         };
                     });
             }

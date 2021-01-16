@@ -4,26 +4,27 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using ReportingSystem.Shared.Interfaces.Authentification;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ReportingSystem.Web.Authentication
 {
-    public class AuthenticationAttribute : TypeFilterAttribute
+    public class AuthorizationAttribute : TypeFilterAttribute
     {
-        public AuthenticationAttribute() : base(typeof(AuthenticationFilter))
+        public AuthorizationAttribute() : base(typeof(AuthorizationFilter))
         {
         }
     }
 
-    public class AuthenticationFilter : IAsyncAuthorizationFilter
+    public class AuthorizationFilter : IAsyncAuthorizationFilter
     {
-        private readonly IJwtTokenService _tokenService;
         private readonly IAuthorizationService _authorizationService;
 
-        public AuthenticationFilter(IJwtTokenService tokenService, IAuthorizationService authorizationService)
+        public AuthorizationFilter(IAuthorizationService authorizationService)
         {
-            _tokenService = tokenService;
             _authorizationService = authorizationService;
         }
 
@@ -34,35 +35,28 @@ namespace ReportingSystem.Web.Authentication
                 return;
             }
 
-            if (!AuthenticationHeaderValue.TryParse(context.HttpContext.Request.Headers["Authorization"], out AuthenticationHeaderValue authHeader))
-            {
-                context.Result = new UnauthorizedResult();
-                return;
-            }
-
-            if (string.IsNullOrEmpty(authHeader?.Parameter) || !authHeader.Scheme.Equals("Bearer", StringComparison.OrdinalIgnoreCase))
-            {
-                context.Result = new UnauthorizedResult();
-                return;
-            }
-
             try
             {
-                var jwtTokenString = authHeader.Parameter;
-                var token = _tokenService.Read(jwtTokenString);
+                var user = context.HttpContext?.User;
+                if (!user.Identity.IsAuthenticated)
+                {
+                    context.Result = new UnauthorizedResult();
+                    return;
+                }
 
                 var controller = context.HttpContext.Request.RouteValues.GetValueOrDefault("controller").ToString();
                 var action = context.HttpContext.Request.RouteValues.GetValueOrDefault("action").ToString();
 
-                var hasAccess = await _authorizationService.UserHasAccess(token.Subject, $"{controller}/{action}");
+                var hasAccess = await _authorizationService.UserHasAccess(GetEmailFromClaims(user.Claims), $"{controller}/{action}");
                 if (!hasAccess)
                 {
                     context.Result = new ForbidResult();
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                context.Result = new UnauthorizedResult();
+                //tod: log exception
+                context.Result = new ForbidResult();
             }
 
             return;
@@ -81,5 +75,21 @@ namespace ReportingSystem.Web.Authentication
             return false;
         }
 
+        private string GetEmailFromClaims(IEnumerable<Claim> claims)
+        {
+            if (claims == null || !claims.Any())
+            {
+                throw new Exception("No claims found");
+            }
+
+            var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email || x.Type == JwtRegisteredClaimNames.Email);
+
+            if (email == null)
+            {
+                throw new Exception("Email claim not found");
+            }
+
+            return email.Value;
+        }
     }
 }

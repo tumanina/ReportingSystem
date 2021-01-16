@@ -13,13 +13,13 @@ using System.Threading.Tasks;
 
 namespace ReportingSystem.Web.Authentication
 {
-    internal class JwtTokenAuthorizationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+    internal class JwtTokenAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        public const string AuthenticationScheme = "LocalAuth";
+        public const string AuthenticationScheme = "Bearer";
         private readonly IAccountService _accountService;
         private readonly IJwtTokenService _tokenService;
 
-        public JwtTokenAuthorizationHandler(
+        public JwtTokenAuthenticationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
@@ -46,17 +46,14 @@ namespace ReportingSystem.Web.Authentication
                     var jwtTokenString = authHeader.Parameter;
                     var token = _tokenService.Read(jwtTokenString);
 
-                    var getUserResult = await _accountService.GetByUsernameAsync(ResolveEmailAsync(token.Claims));
+                    var account = await _accountService.GetByUsernameAsync(GetEmailFromClaims(token.Claims));
 
-                    var user = await _accountService.GetByUsernameAsync(ResolveEmailAsync(token.Claims));
-
-                    if (user == null)
+                    if (account == null)
                     {
                         return AuthenticateResult.Fail("User not found");
                     }
 
                     var principal = _tokenService.Validate(jwtTokenString);
-
                     if (principal == null)
                     {
                         return AuthenticateResult.Fail("Token validation failed");
@@ -72,15 +69,19 @@ namespace ReportingSystem.Web.Authentication
             return AuthenticateResult.Fail("Missing Authorization Header");
         }
 
-        private string ResolveEmailAsync(IEnumerable<Claim> claims)
+        private string GetEmailFromClaims(IEnumerable<Claim> claims)
         {
             if (claims == null || !claims.Any())
+            {
                 throw new Exception("No claims found");
+            }
 
             var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email || x.Type == JwtRegisteredClaimNames.Email);
 
             if (email == null)
+            {
                 throw new Exception("Email claim not found");
+            }
 
             return email.Value;
         }

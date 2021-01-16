@@ -23,6 +23,7 @@ using ReportingSystem.Shared.Interfaces;
 using ReportingSystem.Shared.Interfaces.Authentification;
 using ReportingSystem.Shared.Interfaces.DalServices;
 using ReportingSystem.Web.Authentication;
+using ReportingSystem.Web.Filters;
 using ReportingSystem.Web.Models;
 using System.Collections.Generic;
 
@@ -72,6 +73,7 @@ namespace ReportingSystem.Web
             services.AddScoped<ITemplateVersionDalService, TemplateVersionDalService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<ISecurityService, Rs256SecurityService>();
+            services.AddScoped<ISecurityService, Hs256SecurityService>();
 
             services.ConfigureAuth();
 
@@ -92,6 +94,7 @@ namespace ReportingSystem.Web
             app.UseSwaggerUi3();
 
             app.UseRouting();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -118,7 +121,7 @@ namespace ReportingSystem.Web
                 {
                     document.Info.Version = "v1";
                     document.Info.Title = "Reporting service";
-                    document.SecurityDefinitions.Add("ApiKey", new NSwag.OpenApiSecurityScheme
+                    document.SecurityDefinitions.Add("Bearer Token", new NSwag.OpenApiSecurityScheme
                     {
                         Description = "JWT Authorization header Token. Enter : \"Bearer YourTokenHere\"",
                         Name = "Authorization",
@@ -127,8 +130,16 @@ namespace ReportingSystem.Web
                         Scheme = "bearer",
                         BearerFormat = "JWT",
                     });
+                    document.SecurityDefinitions.Add("Basic", new NSwag.OpenApiSecurityScheme
+                    {
+                        Description = "Basic authorization",
+                        Name = "Authorization",
+                        In = NSwag.OpenApiSecurityApiKeyLocation.Header,
+                        Type = NSwag.OpenApiSecuritySchemeType.Basic
+                    });
                 };
-                config.OperationProcessors.Add(new OperationSecurityScopeProcessor("ApiKey"));
+                config.OperationProcessors.Add(new OperationSecurityScopeProcessor("Bearer Token"));
+                config.OperationProcessors.Add(new OperationSecurityScopeProcessor("Basic"));
             });
         }
     }

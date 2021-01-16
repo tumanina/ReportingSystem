@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace ReportingSystem.Dal.Entities
 {
-    public class AccountEntity
+    public class AccountEntity: BaseEntity
     {
-        public Guid Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
 

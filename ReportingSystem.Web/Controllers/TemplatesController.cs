@@ -8,10 +8,12 @@ using Microsoft.Extensions.Logging;
 using ReportingSystem.Web.Models;
 using System;
 using ReportingSystem.Shared.Enums;
+using ReportingSystem.Web.Authentication;
 
 namespace ReportingSystem.Web.Controllers
 {
     [Route("api/v1/templates")]
+    [Authorization]
     public class TemplatesController : BaseController
     {
         private readonly ITemplateManager _templateManager;

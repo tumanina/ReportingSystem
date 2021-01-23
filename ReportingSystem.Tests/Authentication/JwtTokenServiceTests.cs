@@ -33,7 +33,7 @@ namespace ReportingSystem.Tests.Authentication
             var token = result;
             Assert.IsNotNull(token);
 
-            var principal = service.Validate(token);
+            var principal = service.Validate(token.Token);
             Assert.IsNotNull(principal);
             var identity = principal.Identity;
             Assert.IsTrue(identity.IsAuthenticated);
@@ -56,7 +56,7 @@ namespace ReportingSystem.Tests.Authentication
             var token = result;
             Assert.IsNotNull(token);
 
-            var principal = service.Validate(token);
+            var principal = service.Validate(token.Token);
             Assert.IsNotNull(principal);
             var identity = principal.Identity;
             Assert.IsTrue(identity.IsAuthenticated);
@@ -230,7 +230,7 @@ namespace ReportingSystem.Tests.Authentication
         public void ValidateRS256Token_CertificateWithoutPrivateKey_ReturnsError()
         {
             var settings = GetRS256TestSettings();
-            settings.CertificateData = "***";
+            settings.CertificateData = "MIIDJzCCAg+gAwIBAgIQFK8ijcsSh4lLgz1smWslEzANBgkqhkiG9w0BAQsFADAZMRcwFQYDVQQDDA5ERVNLVE9QLUlSVTAwODAeFw0yMDA0MTUxNjEzMjdaFw0yMTA0MTUxNjMzMjdaMBkxFzAVBgNVBAMMDkRFU0tUT1AtSVJVMDA4MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxy27KbXPt1QO+Y+8Ne7bjdRfKRNtOOKXv5BER6QFIE3DlS4UTr1VRuWb4kpmU7rSiO01z9SAXXz+drbb74TZdu9auOyfME0ePSCQp10HYE45TACJ5TX561Tm2grn1wxuKy5ht+nku7JAZq/mDIwyZDOn+Jz6qxIxXmSzALWk8fBsjW74bzow34Wt6SQIFigF1C1E+jZbqO8KOEkKR+4NHtFU3a6EN6ZHhI+IYW9L0etooBtuHvOb47GDXgKo1eAhwMEOgiqnmfN3BCOOahxdIZU+11B/s9CGwRbMlLz6U+dheIB5UEqVTq0DUBUMRqQ9LmbT8IjYJJz5pJa6DTyYhQIDAQABo2swaTAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMBkGA1UdEQQSMBCCDkRFU0tUT1AtSVJVMDA4MB0GA1UdDgQWBBTnYVztJgdBEsQtKaN2kPBcTVrTsjANBgkqhkiG9w0BAQsFAAOCAQEArTX7lm1YJvjIb0x3aa4Gbql84l+ca7Jo/hKcjkx6ZnqZdXdHlKVmK+++ieNhKNCUBMKOsd9CxJ1XF7YJaskOSHtMX268Rdk/KgONnTtyeqlHWUSIl3MDEM8Jw2etEHJsI3DjqICz88FwMi1rvhIGg/XF3Ug4S4eIE5l8PirJYyk0+RS029GoBzKzNcFNz3znS89EoYjLg6aMWONNIK5AFR2pGDZgkpFDdj2OVWaiARCGAs3GO4s2aYX68C3YJej82uKVZj6UhQuSt4olLws3zloFz+5bg7rrbpV4paX7Z8Zv3d9Or5ljdB56H+rKvOxfzx6z01gleP7PKBw//lhi3A==";
 
             var mockSettings = new Mock<IOptions<SecuritySettings>>();
             mockSettings.Setup(m => m.Value).Returns(() => settings);
@@ -365,7 +365,7 @@ namespace ReportingSystem.Tests.Authentication
             mockSettings.Setup(m => m.Value).Returns(() => settings ?? GetRS256TestSettings());
 
             var service = new JwtTokenService(new List<ISecurityService> { new Rs256SecurityService(mockSettings.Object) }, mockSettings.Object);
-            return service.GenerateToken(_email);
+            return service.GenerateToken(_email).Token;
         }
 
         private string GenerateHS256Token()
@@ -374,7 +374,7 @@ namespace ReportingSystem.Tests.Authentication
             mockSettings.Setup(m => m.Value).Returns(() => GetHS256TestSettings());
 
             var service = new JwtTokenService(new List<ISecurityService> { new Hs256SecurityService(mockSettings.Object) }, mockSettings.Object);
-            return service.GenerateToken(_email);
+            return service.GenerateToken(_email).Token;
         }
 
         private SecuritySettings GetRS256TestSettings(string audience = null, string issue = null, string certificateData = null)

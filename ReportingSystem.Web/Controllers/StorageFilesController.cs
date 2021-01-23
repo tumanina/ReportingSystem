@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ReportingSystem.Shared.Interfaces;
+using ReportingSystem.Web.Authentication;
 using ReportingSystem.Web.Models;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 namespace ReportingSystem.Web.Controllers
 {
     [Route("api/v1/files")]
+    [Authorization]
     public class StorageFilesController : BaseController
     {
         private readonly IFileService _fileStorageService;

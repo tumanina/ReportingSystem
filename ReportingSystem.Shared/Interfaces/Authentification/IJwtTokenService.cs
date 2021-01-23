@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using ReportingSystem.Shared.Models;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace ReportingSystem.Shared.Interfaces.Authentification
@@ -10,7 +11,7 @@ namespace ReportingSystem.Shared.Interfaces.Authentification
         /// </summary>
         /// <param name="token">A string with raw token</param>
         /// <returns>string</returns>
-        string GenerateToken(string email);
+        TokenModel GenerateToken(string email);
 
         /// <summary>
         /// Reads and validates the JWT token from a string

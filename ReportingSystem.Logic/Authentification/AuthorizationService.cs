@@ -9,10 +9,29 @@ namespace ReportingSystem.Logic.Authentification
     public class AuthorizationService : IAuthorizationService
     {
         private readonly IAccountService _accountService;
+        private readonly IJwtTokenService _tokenService; 
 
-        public AuthorizationService(IAccountService accountService)
+        public AuthorizationService(IAccountService accountService, IJwtTokenService tokenService)
         {
             _accountService = accountService;
+            _tokenService = tokenService;
+        }
+
+        public async Task<TokenModel> Login(string username, string action)
+        {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(action))
+            {
+                throw new Exception("Required parameter is null or empty");
+            }
+
+            var account = await _accountService.GetByUsernameAsync(username.ToLower());
+
+            if (account == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            return _tokenService.GenerateToken(account.Username);
         }
 
         public bool UserHasAccess(AccountModel account, string action)

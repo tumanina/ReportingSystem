@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using ReportingSystem.Shared.Configuration;
 using ReportingSystem.Shared.Enums;
 using ReportingSystem.Shared.Interfaces.Authentification;
+using ReportingSystem.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -24,7 +25,7 @@ namespace ReportingSystem.Logic.Authentification
             _securitySettings = securitySettings.Value;
         }
 
-        public string GenerateToken(string email)
+        public TokenModel GenerateToken(string email)
         {
             var dateTimeNow = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
             var expiresDateTime = DateTime.Now.AddSeconds(_securitySettings.TokenExpiration.TotalSeconds);
@@ -49,7 +50,9 @@ namespace ReportingSystem.Logic.Authentification
 
             var securityService = GetSecurityService(_securitySettings.SecurityType);
 
-            return securityService.GenerateToken(payload);
+            var token = securityService.GenerateToken(payload);
+
+            return new TokenModel { Token = token, ExpiredAt = expiresDateTime };
         }
 
         public JwtSecurityToken Read(string token)

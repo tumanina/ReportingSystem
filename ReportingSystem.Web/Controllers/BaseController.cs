@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 namespace ReportingSystem.Web.Controllers
 {
     [ApiController]
-    [Authorization]
     public abstract class BaseController : ControllerBase
     {
         private readonly ILogger<ControllerBase> _logger;

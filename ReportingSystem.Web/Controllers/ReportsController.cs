@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace ReportingSystem.Web.Controllers
 {
     [Route("api/v1/reports")]
+    [Authorization]
     public class ReportsController : BaseController
     {
         private readonly IReportManager _reportManager;

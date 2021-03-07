@@ -25,36 +25,6 @@ namespace ReportingSystem.Logic.Authentification
             _securitySettings = securitySettings.Value;
         }
 
-        public TokenModel GenerateToken(string email)
-        {
-            var dateTimeNow = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
-            var expiresDateTime = DateTime.Now.AddSeconds(_securitySettings.TokenExpiration.TotalSeconds);
-            var payload = new JwtPayload
-            {
-                { "sub", email },
-                { "email", email },
-                { "iat", dateTimeNow },
-                { "nbf", dateTimeNow },
-                { "exp", ((DateTimeOffset)expiresDateTime).ToUnixTimeSeconds() }
-            };
-
-            if (_securitySettings.Audience != null)
-            {
-                payload.Add("aud", _securitySettings.Audience);
-            }
-
-            if (_securitySettings.Issuer != null)
-            {
-                payload.Add("iss", _securitySettings.Issuer);
-            }
-
-            var securityService = GetSecurityService(_securitySettings.SecurityType);
-
-            var token = securityService.GenerateToken(payload);
-
-            return new TokenModel { Token = token, ExpiredAt = expiresDateTime };
-        }
-
         public JwtSecurityToken Read(string token)
         {
             try

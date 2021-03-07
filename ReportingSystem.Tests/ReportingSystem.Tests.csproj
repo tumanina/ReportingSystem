@@ -7,18 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Authentication\**" />
-    <EmbeddedResource Remove="Authentication\**" />
-    <None Remove="Authentication\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Authentication\HS256SecurityServiceTests.cs" />
-    <Compile Include="Authentication\JwtTokenServiceTests.cs" />
-    <Compile Include="Authentication\RS256SecurityServiceTests.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
     <PackageReference Include="Moq" Version="4.15.2" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.1" />

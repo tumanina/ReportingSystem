@@ -1,4 +1,7 @@
-﻿using ReportingSystem.Shared.Interfaces.Authentification;
+﻿using AuthService.Client.Interfaces;
+using Microsoft.Extensions.Options;
+using ReportingSystem.Shared.Configuration;
+using ReportingSystem.Shared.Interfaces.Authentification;
 using ReportingSystem.Shared.Models;
 using System;
 using System.Linq;
@@ -8,30 +11,16 @@ namespace ReportingSystem.Logic.Authentification
 {
     public class AuthorizationService : IAuthorizationService
     {
-        private readonly IAccountService _accountService;
-        private readonly IJwtTokenService _tokenService; 
+        private readonly IAuthorizationClient _authorizationClient;
 
-        public AuthorizationService(IAccountService accountService, IJwtTokenService tokenService)
+        public AuthorizationService(IAuthorizationClient authorizationClient, IOptions<AuthServiceSettings> authServiceSettings)
         {
-            _accountService = accountService;
-            _tokenService = tokenService;
-        }
+            _authorizationClient = authorizationClient;
 
-        public async Task<TokenModel> Login(string username, string action)
-        {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(action))
+            if (authServiceSettings.Value != null)
             {
-                throw new Exception("Required parameter is null or empty");
+                _authorizationClient.ConfigureClient(authServiceSettings.Value.Url);
             }
-
-            var account = await _accountService.GetByUsernameAsync(username.ToLower());
-
-            if (account == null)
-            {
-                throw new Exception("User not found");
-            }
-
-            return _tokenService.GenerateToken(account.Username);
         }
 
         public bool UserHasAccess(AccountModel account, string action)
@@ -42,13 +31,14 @@ namespace ReportingSystem.Logic.Authentification
 
         public async Task<bool> UserHasAccess(string username, string action)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(action))
+            var getUserHasAccessResult = await _authorizationClient.UserHasAccess(username, action);
+
+            if (!getUserHasAccessResult.Success)
             {
-                throw new Exception("Required parameter is null or empty");
+                throw new UnauthorizedAccessException(string.Join(',', getUserHasAccessResult.Errors));
             }
 
-            var account = await _accountService.GetByUsernameAsync(username.ToLower());
-            return account.Actions.Any(c => c.Name.Equals(action, StringComparison.InvariantCultureIgnoreCase));
+            return getUserHasAccessResult.Data;
         }
     }
 }

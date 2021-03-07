@@ -1,3 +1,5 @@
+using AuthService.Client;
+using AuthService.Client.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -58,6 +60,7 @@ namespace ReportingSystem.Web
             services.Configure<AzureStorageConfiguration>(Configuration.GetSection(nameof(AzureStorageConfiguration)));
             services.Configure<PowerBiConfiguration>(Configuration.GetSection(nameof(PowerBiConfiguration)));
             services.Configure<SecuritySettings>(Configuration.GetSection(nameof(SecuritySettings)));
+            services.Configure<AuthServiceSettings>(Configuration.GetSection(nameof(AuthServiceSettings)));
             services.ConfigureAzureStorageServices();
             services.ConfigurePowerBiServices();
             services.AddScoped<IFileService, FileService>();
@@ -67,7 +70,8 @@ namespace ReportingSystem.Web
             services.AddScoped<ITemplateManager, TemplateManager>();
             services.AddScoped<IAuthorizationService, AuthorizationService>();
             services.AddScoped<IAccountService, AccountService>();
-            services.AddScoped<IAccountDalService, AccountDalService>();
+            services.AddScoped<IAccountClient, AccountClient>();
+            services.AddScoped<IAuthorizationClient, AuthorizationClient>();
             services.AddScoped<IReportDalService, ReportDalService>();
             services.AddScoped<ITemplateDalService, TemplateDalService>();
             services.AddScoped<ITemplateVersionDalService, TemplateVersionDalService>();

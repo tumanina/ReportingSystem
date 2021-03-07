@@ -1,4 +1,8 @@
-﻿using ReportingSystem.Shared.Interfaces.Authentification;
+﻿using AuthService.Client.Interfaces;
+using AuthService.Common.Interfaces.Services;
+using Microsoft.Extensions.Options;
+using ReportingSystem.Shared.Configuration;
+using ReportingSystem.Shared.Interfaces.Authentification;
 using ReportingSystem.Shared.Interfaces.DalServices;
 using ReportingSystem.Shared.Models;
 using System;
@@ -9,36 +13,40 @@ namespace ReportingSystem.Logic.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly IAccountDalService _dalService;
+        private readonly IAccountClient _accountClient;
 
-        public AccountService(IAccountDalService dalService)
+        public AccountService(IAccountClient accountClient, IOptions<AuthServiceSettings> authServiceSettings)
         {
-            _dalService = dalService;
-        }
+            _accountClient = accountClient;
 
-        public async Task<AccountModel> GetByUsernameAsync(string username)
-        {
-            return await _dalService.GetByUsernameAsync(username);
-        }
-
-        public async Task<AccountModel> GetAccountAsync(Guid id)
-        {
-            return await _dalService.GetAccountAsync(id);
+            if (authServiceSettings.Value != null)
+            {
+                _accountClient.ConfigureClient(authServiceSettings.Value.Url);
+            }
         }
 
         public async Task<AccountModel> GetAccountAsync(string username, string password)
         {
-            return await _dalService.GetAccountAsync(username, password);
+            var getAccountResult = await _accountClient.GetAccountAsync(username, password);
+
+            if (!getAccountResult.Success)
+            {
+                throw new UnauthorizedAccessException(string.Join(',', getAccountResult.Errors));
+            }
+
+            var account = getAccountResult.Data;
+
+            if (account == null)
+            {
+                throw new UnauthorizedAccessException("Account not found");
+            }
+
+            return new AccountModel { Id = account.Id, Username = account.UserName };
         }
 
-        public async Task<AccountModel> CreateAccount(string username, string password, IEnumerable<Guid> actionIds)
+        public Task<AccountModel> GetByUsernameAsync(string username)
         {
-            return await _dalService.CreateAccountAsync(username, password, actionIds);
-        }
-
-        public async Task AddActionsToAccount(Guid accountId, IEnumerable<Guid> actionIds)
-        {
-            await _dalService.AddActionsToAccountAsync(accountId, actionIds);
+            throw new NotImplementedException();
         }
     }
 }
